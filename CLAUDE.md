@@ -1,3 +1,8 @@
+# Eluo Skill Hub
+
+웹 에이전시의 기획-디자인-퍼블리싱-개발-QA 워크플로우를 자동화하는 플러그인 마켓플레이스.
+Claude Code 플러그인(Skill) 시스템 기반으로, 각 직군별 반복 업무를 자동화하는 스킬을 등록·검색·설치·실행할 수 있다.
+
 # Project Constitution
 
 ## Tech Stack
