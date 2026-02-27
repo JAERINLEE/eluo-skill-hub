@@ -86,7 +86,7 @@ describe("DashboardShell", () => {
   });
 
   it("nav, header, main 시맨틱 요소를 포함하는 3분할 레이아웃을 렌더링한다", () => {
-    render(<DashboardShell />);
+    render(<DashboardShell userEmail="" />);
 
     expect(
       screen.getByRole("navigation", { name: "메인 내비게이션" })
@@ -100,7 +100,7 @@ describe("DashboardShell", () => {
       createMockState({ isMobileMenuOpen: true, isMobile: true })
     );
 
-    render(<DashboardShell />);
+    render(<DashboardShell userEmail="" />);
 
     const overlay = screen.getByTestId("mobile-overlay");
     expect(overlay).toBeInTheDocument();
@@ -115,7 +115,7 @@ describe("DashboardShell", () => {
       createMockState({ isMobileMenuOpen: false, isMobile: true })
     );
 
-    render(<DashboardShell />);
+    render(<DashboardShell userEmail="" />);
 
     expect(screen.queryByTestId("mobile-overlay")).not.toBeInTheDocument();
   });
@@ -125,7 +125,7 @@ describe("DashboardShell", () => {
       createMockState({ isMobileMenuOpen: true, isMobile: false })
     );
 
-    render(<DashboardShell />);
+    render(<DashboardShell userEmail="" />);
 
     expect(screen.queryByTestId("mobile-overlay")).not.toBeInTheDocument();
   });
@@ -140,7 +140,7 @@ describe("DashboardShell", () => {
       })
     );
 
-    render(<DashboardShell />);
+    render(<DashboardShell userEmail="" />);
 
     const overlay = screen.getByTestId("mobile-overlay");
     fireEvent.click(overlay);
@@ -149,7 +149,7 @@ describe("DashboardShell", () => {
   });
 
   it("h-screen 클래스가 적용되어 전체 뷰포트 높이를 사용한다", () => {
-    const { container } = render(<DashboardShell />);
+    const { container } = render(<DashboardShell userEmail="" />);
 
     const rootDiv = container.firstElementChild;
     expect(rootDiv).not.toBeNull();
@@ -157,7 +157,7 @@ describe("DashboardShell", () => {
   });
 
   it("flex 레이아웃 클래스가 적용되어 있다", () => {
-    const { container } = render(<DashboardShell />);
+    const { container } = render(<DashboardShell userEmail="" />);
 
     const rootDiv = container.firstElementChild;
     expect(rootDiv).not.toBeNull();
@@ -165,7 +165,7 @@ describe("DashboardShell", () => {
   });
 
   it("메인 콘텐츠 영역에 md:ml-64 클래스가 적용되어 사이드바 오른쪽에 배치된다", () => {
-    const { container } = render(<DashboardShell />);
+    const { container } = render(<DashboardShell userEmail="" />);
 
     // md:ml-64 클래스를 가진 콘텐츠 래퍼를 확인한다
     const contentWrapper = container.querySelector(".md\\:ml-64");
@@ -181,7 +181,7 @@ describe("DashboardShell", () => {
       })
     );
 
-    render(<DashboardShell />);
+    render(<DashboardShell userEmail="" />);
 
     const sidebar = screen.getByTestId("app-sidebar");
     expect(sidebar).toHaveAttribute("data-selected", "디자인");

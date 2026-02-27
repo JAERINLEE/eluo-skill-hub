@@ -11,12 +11,25 @@ jest.mock("@/shared/ui/components/search-input", () => ({
   ),
 }));
 
+jest.mock("@/shared/ui/components/user-profile-popover", () => ({
+  UserProfilePopover: ({ userEmail }: { userEmail: string }) => (
+    <div data-testid="user-profile-popover">{userEmail}</div>
+  ),
+}));
+
+jest.mock("@/shared/ui/components/skeleton", () => ({
+  Skeleton: (props: Record<string, unknown>) => (
+    <div data-testid="profile-skeleton" data-slot="skeleton" {...props} />
+  ),
+}));
+
 const defaultProps = {
   pageTitle: "대시보드",
   searchQuery: "",
   onSearchChange: jest.fn(),
   isMobile: false,
   onToggleMobileMenu: jest.fn(),
+  userEmail: "user@eluocnc.com",
 };
 
 describe("AppHeader", () => {
@@ -77,9 +90,45 @@ describe("AppHeader", () => {
     expect(screen.queryByTestId("search-input")).not.toBeInTheDocument();
   });
 
-  it("사용자 프로필 아이콘 영역을 표시한다", () => {
-    render(<AppHeader {...defaultProps} />);
-    const profileArea = screen.getByTestId("user-profile");
-    expect(profileArea).toBeInTheDocument();
+  // Task 5.1: 인증 상태에 따른 프로필 영역 테스트
+
+  describe("인증 상태에 따른 프로필 영역", () => {
+    it("userEmail이 존재하면 UserProfilePopover를 렌더링한다", () => {
+      render(<AppHeader {...defaultProps} userEmail="user@eluocnc.com" />);
+      const popover = screen.getByTestId("user-profile-popover");
+      expect(popover).toBeInTheDocument();
+      expect(popover).toHaveTextContent("user@eluocnc.com");
+    });
+
+    it("userEmail이 존재하면 프로필 영역에 활성 상태 스타일을 적용한다", () => {
+      render(<AppHeader {...defaultProps} userEmail="user@eluocnc.com" />);
+      const profileArea = screen.getByTestId("user-profile");
+      expect(profileArea).toBeInTheDocument();
+      expect(profileArea.className).toMatch(/ring/);
+    });
+
+    it("userEmail이 빈 문자열이면 로딩 스켈레톤을 표시한다", () => {
+      render(<AppHeader {...defaultProps} userEmail="" />);
+      const skeleton = screen.getByTestId("profile-skeleton");
+      expect(skeleton).toBeInTheDocument();
+    });
+
+    it("userEmail이 빈 문자열이면 UserProfilePopover를 렌더링하지 않는다", () => {
+      render(<AppHeader {...defaultProps} userEmail="" />);
+      expect(screen.queryByTestId("user-profile-popover")).not.toBeInTheDocument();
+    });
+
+    it("userEmail이 존재하면 기존 정적 프로필 아이콘 div를 표시하지 않는다", () => {
+      render(<AppHeader {...defaultProps} userEmail="user@eluocnc.com" />);
+      // UserProfilePopover가 렌더링되므로 정적 div 대신 popover가 보여야 한다
+      const popover = screen.getByTestId("user-profile-popover");
+      expect(popover).toBeInTheDocument();
+    });
+
+    it("userEmail이 존재하면 프로필 영역의 data-testid가 user-profile이다", () => {
+      render(<AppHeader {...defaultProps} userEmail="user@eluocnc.com" />);
+      const profileArea = screen.getByTestId("user-profile");
+      expect(profileArea).toBeInTheDocument();
+    });
   });
 });

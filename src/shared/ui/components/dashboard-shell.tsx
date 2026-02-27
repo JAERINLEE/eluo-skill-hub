@@ -5,7 +5,11 @@ import { AppSidebar } from "./app-sidebar";
 import { AppHeader } from "./app-header";
 import { MainContent } from "./main-content";
 
-export function DashboardShell() {
+interface DashboardShellProps {
+  readonly userEmail: string;
+}
+
+export function DashboardShell({ userEmail }: DashboardShellProps) {
   const {
     selectedCategory,
     searchQuery,
@@ -47,6 +51,7 @@ export function DashboardShell() {
           onSearchChange={setSearchQuery}
           isMobile={isMobile}
           onToggleMobileMenu={toggleMobileMenu}
+          userEmail={userEmail}
         />
         <MainContent
           filteredSkills={filteredSkills}

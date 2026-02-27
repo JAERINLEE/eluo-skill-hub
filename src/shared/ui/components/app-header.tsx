@@ -1,8 +1,10 @@
 "use client";
 
-import { Menu, User } from "lucide-react";
+import { Menu } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { SearchInput } from "./search-input";
+import { UserProfilePopover } from "./user-profile-popover";
+import { Skeleton } from "./skeleton";
 
 interface AppHeaderProps {
   readonly pageTitle: string;
@@ -10,6 +12,7 @@ interface AppHeaderProps {
   readonly onSearchChange: (query: string) => void;
   readonly isMobile: boolean;
   readonly onToggleMobileMenu: () => void;
+  readonly userEmail: string;
 }
 
 export function AppHeader({
@@ -18,6 +21,7 @@ export function AppHeader({
   onSearchChange,
   isMobile,
   onToggleMobileMenu,
+  userEmail,
 }: AppHeaderProps) {
   return (
     <header className="flex h-14 items-center justify-between border-b border-border bg-background px-4">
@@ -40,12 +44,19 @@ export function AppHeader({
           </div>
         )}
         <ThemeToggle />
-        <div
-          data-testid="user-profile"
-          className="flex items-center justify-center rounded-full bg-muted h-8 w-8"
-        >
-          <User className="h-4 w-4 text-muted-foreground" />
-        </div>
+        {userEmail ? (
+          <div
+            data-testid="user-profile"
+            className="flex items-center justify-center rounded-full ring-2 ring-primary"
+          >
+            <UserProfilePopover userEmail={userEmail} />
+          </div>
+        ) : (
+          <Skeleton
+            data-testid="profile-skeleton"
+            className="rounded-full h-8 w-8"
+          />
+        )}
       </div>
     </header>
   );
