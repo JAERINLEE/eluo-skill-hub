@@ -232,11 +232,10 @@ export function SkillModal({ skill, isBookmarked, onClose, onToggleBookmark }: S
                       onClick={() => setSelectedRating(star)}
                       aria-label={`★ ${star}`}
                       aria-pressed={selectedRating === star}
-                      className={`w-10 h-10 rounded-full text-lg transition-colors ${
-                        selectedRating !== null && star <= selectedRating
-                          ? 'text-yellow-400'
-                          : 'text-slate-300 dark:text-slate-600 hover:text-yellow-300'
-                      }`}
+                      className={`w-10 h-10 rounded-full text-lg transition-colors ${selectedRating !== null && star <= selectedRating
+                        ? 'text-yellow-400'
+                        : 'text-slate-300 dark:text-slate-600 hover:text-yellow-300'
+                        }`}
                     >
                       ★
                     </button>
@@ -266,30 +265,22 @@ export function SkillModal({ skill, isBookmarked, onClose, onToggleBookmark }: S
         </div>
 
         {/* Right: Side Panel */}
-        <div className="w-80 flex-shrink-0 border-l border-slate-200 dark:border-slate-700 p-6 bg-slate-50 dark:bg-slate-800/50 overflow-y-auto">
+        <div className="w-60 flex-shrink-0 border-l border-slate-200 dark:border-slate-700 pt-16 px-6 pb-6 bg-slate-50 dark:bg-slate-800/50 overflow-y-auto">
           {/* Actions */}
           <div className="space-y-3 mb-8">
             <button
               type="button"
               onClick={() => onToggleBookmark(skill.id)}
               data-testid={isBookmarked ? 'bookmark-btn-active' : 'bookmark-btn-inactive'}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm transition-colors ${
-                isBookmarked
-                  ? 'bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20'
-                  : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600'
-              }`}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm transition-colors ${isBookmarked
+                ? 'bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20'
+                : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600'
+                }`}
             >
               <span>{isBookmarked ? '🔖' : '🔖'}</span>
               {isBookmarked ? '북마크 해제' : '북마크 추가'}
             </button>
-            <button
-              type="button"
-              onClick={handleCopyToClipboard}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors"
-            >
-              <span>📋</span>
-              클립보드 복사
-            </button>
+
           </div>
 
           {/* Skill Metadata */}

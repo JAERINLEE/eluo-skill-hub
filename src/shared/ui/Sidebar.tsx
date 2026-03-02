@@ -132,11 +132,8 @@ export function Sidebar({ categories }: SidebarProps) {
 
       {/* Bottom actions */}
       <div className="p-4 border-t border-slate-200 dark:border-slate-800">
-        <button className="w-full bg-primary text-white py-2 px-4 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 hover:bg-primary/90 transition-all shadow-sm">
-          <AddIcon size={16} />
-          에이전트 생성
-        </button>
-        <div className="mt-4 flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+
+        <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
           <HelpOutlineIcon className="text-slate-500" size={24} />
           <span className="text-sm font-medium">도움말</span>
         </div>

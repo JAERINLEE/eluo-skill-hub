@@ -29,7 +29,7 @@ export function SkillCard({ skill, index, isBookmarked, onClick }: SkillCardProp
         {isBookmarked ? (
           <span data-testid="bookmark-icon-active" className="text-primary text-lg">🔖</span>
         ) : (
-          <span data-testid="bookmark-icon-inactive" className="text-slate-300 dark:text-slate-600 text-lg">🔖</span>
+          <span data-testid="bookmark-icon-inactive" className="text-slate-300 dark:text-slate-600 text-lg"></span>
         )}
       </div>
       <div
