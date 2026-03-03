@@ -5,7 +5,10 @@ import dynamic from "next/dynamic";
 const InteractiveGlobe = dynamic(
   () =>
     import("@/shared/ui/interactive-globe").then((m) => m.InteractiveGlobe),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => <div className="w-[460px] h-[460px]" />,
+  }
 );
 
 export function GlobeSection() {
