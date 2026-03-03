@@ -1,142 +1,192 @@
 <!--
-  Sync Impact Report
-  ==================
-  Version change: (unversioned template) → 1.0.0
-  Modified principles: N/A — initial creation from template
-  Added sections:
-    - Core Principles (I. Domain-Driven Architecture, II. Aggregate Root Integrity,
-      III. Type Safety, IV. Test Discipline, V. Commit Convention Compliance)
-    - Tech Stack
-    - Naming Conventions
-    - Governance
-  Removed sections: N/A
-  Templates requiring updates:
-    - .specify/templates/plan-template.md  ✅ Constitution Check section is compatible
-    - .specify/templates/spec-template.md  ✅ No constitution-specific changes required
-    - .specify/templates/tasks-template.md ✅ Task categories align with DDD principles
-  Follow-up TODOs: None — all fields resolved from CLAUDE.md and git history
+SYNC IMPACT REPORT
+==================
+Version change: (template) → 1.0.0
+Modified principles: N/A (initial ratification from template)
+Added sections:
+  - Core Principles (I–V)
+  - Tech Stack Constraints
+  - Development Workflow
+  - Governance
+Removed sections: N/A
+Templates requiring updates:
+  - .specify/templates/plan-template.md ✅ Constitution Check gates verified (no structural change needed)
+  - .specify/templates/spec-template.md ✅ Requirements structure aligned (no structural change needed)
+  - .specify/templates/tasks-template.md ✅ Phase organization reflects principle-driven task types
+  - .specify/templates/agent-file-template.md ✅ References verified (no outdated names found)
+  - .specify/templates/checklist-template.md ✅ References verified (no outdated names found)
+Follow-up TODOs:
+  - None. All placeholders resolved.
 -->
 
 # Eluo Skill Hub Constitution
 
 ## Core Principles
 
-### I. Domain-Driven Architecture
+### I. Type Safety (NON-NEGOTIABLE)
 
-The project MUST follow a strict 3-layer architecture: `domain` → `application` → `infrastructure`.
-The `domain` layer MUST contain only pure business logic with zero external dependencies
-(no framework imports, no database clients, no HTTP clients).
-Features MUST be separated by Bounded Context; each context owns its own models,
-services, and repository interfaces.
-Cross-context communication MUST occur only via domain events — direct
-cross-context object references are forbidden.
+TypeScript `any` type is PROHIBITED throughout the entire codebase without exception.
+All values, props, function parameters, and return types MUST be explicitly typed or
+correctly inferred by TypeScript. Use `unknown` with narrowing guards when the type is
+genuinely unknown at compile time.
 
-**Rationale**: Keeps business logic portable, independently testable, and insulated
-from infrastructure churn. Enforced layer separation prevents the accidental coupling
-that makes large codebases unmanageable over time.
+**Rationale**: Eluo Skill Hub is a multi-role platform (admin/user). Implicit `any`
+types hide contract violations between domain layers and create silent runtime failures
+that are extremely hard to diagnose in production. Type safety is the first line of
+defense for correctness in a clean-architecture codebase.
 
-### II. Aggregate Root Integrity (NON-NEGOTIABLE)
+### II. Clean Architecture
 
-All state-mutating operations on a domain entity MUST go through the Aggregate Root
-of that entity's aggregate. Direct modification of child entities or value objects
-from outside the aggregate boundary is forbidden.
-Repository interfaces MUST expose the aggregate root, never individual sub-entities.
+The codebase MUST follow a strict three-layer separation per bounded context:
 
-**Rationale**: The aggregate root is the single enforcement point for domain invariants
-across a cluster of related objects. Bypassing it silently breaks business rules.
+- **domain/** — Pure business entities, value objects, and repository interfaces.
+  No framework or infrastructure imports allowed. No side effects.
+- **application/** — Use cases that orchestrate domain objects via port interfaces.
+  No direct DB/HTTP calls. Depends only on domain.
+- **infrastructure/** — Concrete implementations (Supabase repositories, HTTP clients).
+  Depends on application ports; never imported by domain or application.
 
-### III. Type Safety (NON-NEGOTIABLE)
+Cross-domain imports (e.g., `auth` importing directly from `skill-marketplace`) are
+PROHIBITED. Shared types belong in `src/shared/`.
 
-TypeScript `any` type is absolutely forbidden throughout the codebase.
-All function signatures, component props, repository return types, and API boundaries
-MUST carry explicit, accurate TypeScript types.
-Use `unknown` with type guards where the type is genuinely dynamic at runtime.
-Generic types are preferred over type assertions (`as`).
+**Rationale**: Layer isolation ensures that business logic can be unit-tested without
+database or framework dependencies, and that infrastructure can be swapped without
+touching domain rules.
 
-**Rationale**: `any` defeats TypeScript's primary value and allows silent runtime errors
-that manifest far from their source. Full typing enables safe refactoring and acts as
-living, compiler-checked documentation.
+### III. Test Coverage by Layer
 
-### IV. Test Discipline
+Every bounded context MUST maintain the following test coverage:
 
-Automated tests MUST cover three layers:
-- **Unit**: Jest for domain logic and application-layer use cases (no I/O allowed).
-- **Component**: React Testing Library for UI component behavior and accessibility.
-- **E2E**: Playwright for critical user journeys end-to-end.
+- **Unit tests** (React Testing Library / Jest): All domain entities, value objects,
+  use cases, and UI components that contain logic.
+- **E2E tests** (Playwright): All user-facing flows listed in the feature spec (login,
+  signup, skill discovery, admin management).
+- Tests MUST be written before or alongside implementation — never deferred to a later PR.
+- A PR that introduces a new use case or domain rule without a corresponding test MUST NOT
+  be merged.
 
-New features MUST include tests before a PR is merged.
-Tests MUST be co-located with the code they cover or in a parallel `__tests__` /
-`tests/` directory at the same scope level.
+**Rationale**: This project's reliability depends on untested domain invariants not
+leaking to production. The layered architecture makes testing each concern in isolation
+cheap — there is no excuse to skip it.
 
-**Rationale**: The web-agency workflows this product automates are regression-sensitive.
-Automated tests are the primary safety net for incremental delivery and refactoring.
+### IV. Feature Module Isolation
 
-### V. Commit Convention Compliance
+Each functional domain (auth, skill-marketplace, bookmark, admin, skill-feedback, etc.)
+MUST be a self-contained module under `src/<domain>/`. A module encapsulates its own
+domain, application, and infrastructure layers. UI components specific to a domain live
+in `src/features/<domain>/`.
 
-Every commit MUST follow the Conventional Commits format: English prefix followed
-by a Korean description.
+- A module MUST NOT import the infrastructure of another module.
+- Shared abstractions (Supabase client, base types, shared UI) MUST live in `src/shared/`.
+- New bounded contexts require explicit team approval before creation.
 
-Allowed prefixes: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `ci`.
+**Rationale**: Module boundaries prevent coupling drift. When a feature is bounded, it
+can be replaced, removed, or scaled independently.
 
-Example: `feat: 스킬 마켓플레이스 페이지 구현`
+### V. Security-First
 
-Commits that do not conform MUST be flagged and corrected in code review before merge.
+All data access and rendering decisions that depend on user identity or role MUST be
+enforced server-side.
 
-**Rationale**: Consistent commit history enables automated release notes, reliable
-bisect debugging, and communicates change intent across a mixed-language team.
+- Supabase Row Level Security (RLS) MUST be enabled and configured for every table
+  that stores user-sensitive data.
+- Server Actions and Route Handlers MUST re-validate the authenticated session from
+  the Supabase server client — never trust client-supplied identity claims.
+- No secrets, service-role keys, or private tokens MUST appear in client-side bundles.
+- Admin-gated pages and API routes MUST check the `admin` role server-side before
+  returning any response.
 
-## Tech Stack
+**Rationale**: The platform distinguishes admin and regular user access. Any gap in
+server-side enforcement creates a privilege escalation vector.
 
-The following technology choices are ratified and MUST NOT be replaced without a
-formal constitution amendment:
+## Tech Stack Constraints
 
-| Concern | Technology |
-|---------|-----------|
-| Frontend Framework | Next.js (App Router) |
-| Language | TypeScript (strict mode) |
-| Database | Supabase (accessed via MCP) |
-| Unit / Component Testing | Jest + React Testing Library |
-| E2E Testing | Playwright |
+The following technology choices are FIXED for this project. Deviations MUST be
+documented in the relevant feature plan's Complexity Tracking table and require
+team approval.
 
-Deviations (e.g., adding an ORM, switching test runners) MUST be proposed as a
-constitution amendment with documented rationale before adoption.
+| Layer | Technology | Notes |
+|-------|-----------|-------|
+| Frontend framework | Next.js (App Router) | Server and Client Components |
+| Language | TypeScript (strict) | `any` PROHIBITED (see Principle I) |
+| Database | Supabase (via MCP) | RLS required on all user tables |
+| Unit/component tests | Jest + React Testing Library | Co-located `__tests__/` directories |
+| E2E tests | Playwright | `src/__tests__/e2e/` |
+| Deployment | Vercel | Environment variables via Vercel dashboard |
+| Styling | Tailwind CSS + shadcn/ui components | No inline style props for layout |
 
-## Naming Conventions
+**New dependencies** MUST be justified in the PR description. Avoid duplicating
+capabilities already provided by the stack above.
 
-Consistent naming is mandatory across all layers. Violations MUST be flagged in
-code review and corrected before merge.
+## Development Workflow
 
-| Artifact | Convention | Example |
-|----------|-----------|---------|
-| Entity | PascalCase | `Skill`, `SkillCategory` |
-| Value Object | PascalCase | `Money`, `SkillSlug` |
-| Use Case | PascalCase + `UseCase` suffix | `InstallSkillUseCase` |
-| Repository | PascalCase + `Repository` suffix | `SkillRepository` |
-| Domain Event | PascalCase + `Event` suffix | `SkillInstalledEvent` |
-| Next.js Page | kebab-case directory + `page.tsx` | `skill-detail/page.tsx` |
-| Component file | PascalCase | `SkillCard.tsx` |
+### Commit Conventions
+
+All commits MUST follow the prefix convention below. Prefix in English; description
+in Korean.
+
+| Prefix | When to use |
+|--------|------------|
+| `feat:` | 새로운 기능 추가 |
+| `fix:` | 버그 수정 |
+| `docs:` | 문서 수정 |
+| `style:` | 코드 스타일 수정 |
+| `refactor:` | 코드 리팩토링 |
+| `test:` | 테스트 코드 추가/수정 |
+| `chore:` | 빌드 프로세스나 툴의 변경 |
+| `ci:` | CI/CD 관련 변경 |
+
+### Code Review Gates
+
+A pull request MUST satisfy all of the following before merge:
+
+1. **Type check passes** — `tsc --noEmit` exits with zero errors.
+2. **Unit tests pass** — All Jest tests green; no `.skip` or `.only` left in test files.
+3. **E2E tests pass** — Playwright suite covers the feature's primary user journeys.
+4. **No `any` escapes** — ESLint `@typescript-eslint/no-explicit-any` rule MUST report
+   zero violations.
+5. **RLS verified** — Any new Supabase table has RLS policies confirmed in the PR.
+6. **Layer boundaries respected** — Infrastructure MUST NOT be imported from domain
+   or application layers.
+
+### Speckit Workflow
+
+Feature development follows the speckit lifecycle:
+
+1. `/speckit.specify` → spec.md
+2. `/speckit.clarify` → resolve ambiguities
+3. `/speckit.plan` → plan.md + research + data-model + contracts
+4. `/speckit.tasks` → tasks.md
+5. `/speckit.analyze` → cross-artifact consistency check
+6. `/speckit.implement` → execute tasks
 
 ## Governance
 
-This constitution is the highest-authority document for Eluo Skill Hub.
-When the constitution conflicts with any other guidance or convention, the constitution
-takes precedence.
+This constitution supersedes all other practices, style guides, or verbal agreements.
+Compliance is mandatory for every PR merged into `main`.
 
-**Amendment Procedure**:
-1. Propose the change in a pull request that updates this file.
-2. Increment the version according to semantic versioning:
-   - MAJOR: principle removal or backward-incompatible redefinition.
-   - MINOR: new principle, new section, or materially expanded guidance.
-   - PATCH: clarification, wording fix, or typo correction.
-3. Update `Last Amended` to the amendment date (ISO YYYY-MM-DD).
-4. Propagate necessary changes to `.specify/templates/` files and record results
-   in a new Sync Impact Report comment at the top of this file.
-5. Obtain team consensus before merging.
+### Amendment Procedure
 
-**Compliance Review**: All PRs MUST be reviewed for constitution compliance.
-Complexity deviations from principles MUST be justified in the PR description
-using the Complexity Tracking table (see plan-template.md).
+1. Author drafts the proposed amendment with rationale.
+2. Amendment is reviewed by at least one other team member.
+3. `/speckit.constitution` is run to update the file and propagate changes.
+4. The updated constitution is committed on `main` with message:
+   `docs: amend constitution to vX.Y.Z (<summary>)`
+5. `LAST_AMENDED_DATE` MUST be updated to the amendment date.
 
-**Runtime Guidance**: For day-to-day development guidance, see `CLAUDE.md`.
+### Versioning Policy
 
-**Version**: 1.0.0 | **Ratified**: 2026-02-27 | **Last Amended**: 2026-03-03
+- **MAJOR**: Removal or fundamental redefinition of an existing principle (e.g., removing
+  the Type Safety principle or switching architecture paradigm).
+- **MINOR**: New principle added, new mandatory section introduced, or materially expanded
+  guidance that changes behaviour expectations.
+- **PATCH**: Wording clarifications, typo fixes, formatting, or non-semantic refinements.
+
+### Compliance Review
+
+- Every PR review MUST include a Constitution Check confirming no principle is violated.
+- The Complexity Tracking table in `plan.md` MUST document any justified deviation.
+- Violations discovered post-merge MUST be tracked as `fix:` or `refactor:` tasks and
+  resolved before the next feature is started.
+
+**Version**: 1.0.0 | **Ratified**: 2026-03-03 | **Last Amended**: 2026-03-03
