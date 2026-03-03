@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <style type="text/tailwindcss">
+        :root {
+            --primary-yellow: #FEFE01;
+            --deep-blue: #00007F;
+            --light-gray: #F0F0F0;
+        }
+        body {
+            background-color: var(--light-gray);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(254, 254, 1, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(0, 0, 127, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(254, 254, 1, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(0, 0, 127, 0.05) 0px, transparent 50%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "brand-yellow": "#FEFE01",
+                        "brand-blue": "#00007F",
+                        "brand-gray": "#F0F0F0",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+    <title>회원가입 | ELUO AI Platform</title>
+</head>
+
+<body class="font-display text-slate-900 min-h-screen flex flex-col">
+    <!-- Header 컴포넌트는 로그인페이지의 header 와 동일하게 구현  -->
+    <main class="flex-1 flex items-center justify-center p-6 my-10">
+        <div class="w-full max-w-[480px] glass-card rounded-3xl shadow-2xl p-8 md:p-10">
+            <div class="flex flex-col items-center mb-10">
+                <div class="w-14 h-14 bg-brand-yellow rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+                    <span class="material-symbols-outlined text-brand-blue text-3xl">person_add</span>
+                </div>
+                <h1 class="text-3xl font-extrabold tracking-tight text-brand-blue">회원가입</h1>
+                <p class="text-slate-500 text-sm mt-3 text-center font-medium">ELUO AI 플랫폼의 새로운 여정을 시작하세요</p>
+            </div>
+            <form class="space-y-5">
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-brand-blue uppercase tracking-wider ml-1">이름</label>
+                    <input
+                        class="w-full h-12 px-4 rounded-xl border-white bg-white/50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all outline-none"
+                        placeholder="홍길동" required="" type="text" />
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-brand-blue uppercase tracking-wider ml-1">이메일</label>
+                    <input
+                        class="w-full h-12 px-4 rounded-xl border-white bg-white/50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all outline-none"
+                        placeholder="example@eluocnc.com" required="" type="email" />
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-brand-blue uppercase tracking-wider ml-1">비밀번호</label>
+                        <input
+                            class="w-full h-12 px-4 rounded-xl border-white bg-white/50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all outline-none"
+                            placeholder="••••••••" required="" type="password" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-brand-blue uppercase tracking-wider ml-1">비밀번호 확인</label>
+                        <input
+                            class="w-full h-12 px-4 rounded-xl border-white bg-white/50 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all outline-none"
+                            placeholder="••••••••" required="" type="password" />
+                    </div>
+                </div>
+                <div class="pt-4">
+                    <button
+                        class="w-full h-14 bg-brand-blue text-white font-bold rounded-xl hover:shadow-lg hover:shadow-brand-blue/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                        type="submit">
+                        회원가입
+                    </button>
+                </div>
+            </form>
+            <div class="mt-5 pt-8 border-t border-white/40 text-center">
+                <p class="text-sm text-slate-600">
+                    이미 계정이 있으신가요?
+                    <a class="text-slate-800 font-bold hover:text-brand-blue transition-colors ml-1 underline underline-offset-4"
+                        href="#">로그인</a>
+                </p>
+
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

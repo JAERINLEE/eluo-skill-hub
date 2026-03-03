@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+        :root {
+            --brand-yellow: #FEFE01;
+            --brand-blue: #00007F;
+            --brand-gray: #F0F0F0;
+        }
+        @layer base {
+            body {
+                background-color: var(--brand-gray);
+                background-image: 
+                    radial-gradient(at 0% 0%, rgba(254, 254, 1, 0.  15) 0px, transparent 50%),
+                    radial-gradient(at 100% 100%, rgba(0, 0, 127, 0.1) 0px, transparent 50%);
+            }
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00007F",
+                        "accent": "#FEFE01",
+                        "neutral-bg": "#F0F0F0",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "brand": "8px",
+                    },
+                },
+            },
+        }
+    </script>
+    <title>ELUO AI SKILL HUB</title>
+</head>
+
+<body class="font-display text-slate-900 min-h-screen flex flex-col">
+    <header
+        class="flex items-center justify-between whitespace-nowrap bg-white/50 backdrop-blur-md px-6 py-3 lg:px-40 border-b border-white/20">
+        <div class="flex items-center gap-4">
+            <div class="text-[var(--brand-blue)]">
+                <span class="material-symbols-outlined text-3xl">token</span>
+            </div>
+            <h2 class="text-slate-900 text-lg font-bold leading-tight tracking-tight">ELUO AI SKILL HUB</h2>
+        </div>
+        <div class="flex items-center gap-8">
+
+            <button
+                class="flex min-w-[84px] cursor-pointer items-center justify-center rounded-brand h-10 px-4 bg-[var(--brand-blue)] text-white text-sm font-bold leading-normal hover:bg-[#0000A0] transition-colors shadow-sm">
+                <span>로그인</span>
+            </button>
+        </div>
+    </header>
+    <main class="flex-1 flex items-center justify-center p-6 relative overflow-hidden">
+        <div class="w-full max-w-[440px] glass-card rounded-2xl shadow-xl p-8 md:p-12 relative z-10">
+            <div class="flex flex-col items-center mb-8">
+                <div
+                    class="w-16 h-16 bg-[var(--brand-yellow)] rounded-2xl flex items-center justify-center mb-4 shadow-sm">
+                    <span class="text-4xl">🤖</span>
+                </div>
+                <h1 class="text-2xl font-bold tracking-tight text-[var(--brand-blue)]">로그인</h1>
+                <p class="text-slate-600 text-sm mt-2 text-center">ELUO AI Skill Hub에 접속하세요</p>
+            </div>
+            <form class="space-y-5">
+                <div class="space-y-2">
+                    <label class="text-sm font-semibold text-slate-700">이메일</label>
+                    <input
+                        class="w-full h-12 px-4 rounded-brand border border-[var(--brand-blue)] border-opacity-20 bg-white/50 text-slate-900 focus:ring-2 focus:ring-[var(--brand-blue)]/10 focus:border-[var(--brand-blue)] transition-all outline-none"
+                        placeholder="example@eluocnc.com" type="email" />
+                </div>
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <label class="text-sm font-semibold text-slate-700">비밀번호</label>
+                        <a class="text-xs text-[var(--brand-blue)] hover:underline" href="#">비밀번호 찾기</a>
+                    </div>
+                    <div class="relative">
+                        <input
+                            class="w-full h-12 px-4 pr-12 rounded-brand border border-[var(--brand-blue)] border-opacity-20 bg-white/50 text-slate-900 focus:ring-2 focus:ring-[var(--brand-blue)]/10 focus:border-[var(--brand-blue)] transition-all outline-none"
+                            placeholder="••••••••" type="password" />
+                        <button
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[var(--brand-blue)]"
+                            type="button">
+                            <span class="material-symbols-outlined text-xl">visibility</span>
+                        </button>
+                    </div>
+                </div>
+                <button
+                    class="w-full h-12 bg-[var(--brand-blue)] text-white font-bold rounded-brand hover:bg-[#0000A0] transition-all shadow-md mt-4"
+                    type="submit">
+                    로그인
+                </button>
+            </form>
+            <div class="mt-8 pt-6 border-t border-slate-200 text-center">
+                <p class="text-sm text-slate-600">
+                    계정이 없으신가요?
+                    <a class="text-[var(--brand-blue)] font-bold hover:underline ml-1" href="#">회원가입</a>
+                </p>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
