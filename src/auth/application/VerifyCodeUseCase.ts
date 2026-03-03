@@ -24,8 +24,8 @@ export class VerifyCodeUseCase {
       return { success: false, error: "인증 코드를 입력해주세요" };
     }
 
-    if (!/^\d{6}$/.test(code)) {
-      return { success: false, error: "인증 코드는 6자리 숫자입니다" };
+    if (!/^\d{8}$/.test(code)) {
+      return { success: false, error: "인증 코드는 8자리 숫자입니다" };
     }
 
     const result = await this.authRepository.verifyOtp(email, code);

@@ -57,9 +57,9 @@ export function VerifyCodeForm({
               name="code"
               type="text"
               inputMode="numeric"
-              maxLength={6}
+              maxLength={8}
               autoComplete="one-time-code"
-              placeholder="000000"
+              placeholder="00000000"
               className={inputClass}
             />
           </div>

@@ -2,7 +2,7 @@ import { VerifyCodeUseCase } from "../VerifyCodeUseCase";
 import type { AuthRepository, AuthResult } from "@/auth/application/ports/AuthRepository";
 
 const TEST_EMAIL = "user@eluocnc.com";
-const VALID_CODE = "123456";
+const VALID_CODE = "12345678";
 
 const createMockAuthRepository = (
   verifyOtpResult: AuthResult
@@ -26,39 +26,39 @@ describe("VerifyCodeUseCase", () => {
       expect(repository.verifyOtp).not.toHaveBeenCalled();
     });
 
-    it("5자리 숫자 코드이면 { success: false, error: '인증 코드는 6자리 숫자입니다' }를 반환한다", async () => {
+    it("7자리 숫자 코드이면 { success: false, error: '인증 코드는 8자리 숫자입니다' }를 반환한다", async () => {
       const repository = createMockAuthRepository({ success: true });
       const useCase = new VerifyCodeUseCase(repository);
 
-      const result = await useCase.execute({ email: TEST_EMAIL, code: "12345" });
+      const result = await useCase.execute({ email: TEST_EMAIL, code: "1234567" });
 
-      expect(result).toEqual({ success: false, error: "인증 코드는 6자리 숫자입니다" });
+      expect(result).toEqual({ success: false, error: "인증 코드는 8자리 숫자입니다" });
       expect(repository.verifyOtp).not.toHaveBeenCalled();
     });
 
-    it("영문자로 이루어진 코드이면 { success: false, error: '인증 코드는 6자리 숫자입니다' }를 반환한다", async () => {
+    it("영문자로 이루어진 코드이면 { success: false, error: '인증 코드는 8자리 숫자입니다' }를 반환한다", async () => {
       const repository = createMockAuthRepository({ success: true });
       const useCase = new VerifyCodeUseCase(repository);
 
-      const result = await useCase.execute({ email: TEST_EMAIL, code: "abcdef" });
+      const result = await useCase.execute({ email: TEST_EMAIL, code: "abcdefgh" });
 
-      expect(result).toEqual({ success: false, error: "인증 코드는 6자리 숫자입니다" });
+      expect(result).toEqual({ success: false, error: "인증 코드는 8자리 숫자입니다" });
       expect(repository.verifyOtp).not.toHaveBeenCalled();
     });
 
-    it("숫자와 영문자가 혼합된 코드이면 { success: false, error: '인증 코드는 6자리 숫자입니다' }를 반환한다", async () => {
+    it("숫자와 영문자가 혼합된 코드이면 { success: false, error: '인증 코드는 8자리 숫자입니다' }를 반환한다", async () => {
       const repository = createMockAuthRepository({ success: true });
       const useCase = new VerifyCodeUseCase(repository);
 
-      const result = await useCase.execute({ email: TEST_EMAIL, code: "123456a" });
+      const result = await useCase.execute({ email: TEST_EMAIL, code: "1234567a" });
 
-      expect(result).toEqual({ success: false, error: "인증 코드는 6자리 숫자입니다" });
+      expect(result).toEqual({ success: false, error: "인증 코드는 8자리 숫자입니다" });
       expect(repository.verifyOtp).not.toHaveBeenCalled();
     });
   });
 
   describe("authRepository.verifyOtp 호출", () => {
-    it("유효한 6자리 숫자 코드이면 authRepository.verifyOtp를 호출한다", async () => {
+    it("유효한 8자리 숫자 코드이면 authRepository.verifyOtp를 호출한다", async () => {
       const repository = createMockAuthRepository({ success: true });
       const useCase = new VerifyCodeUseCase(repository);
 
