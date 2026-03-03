@@ -56,10 +56,12 @@ describe("SignupForm", () => {
   });
 
   describe("form step", () => {
-    it("이메일, 비밀번호 입력 필드와 회원가입 버튼을 렌더링한다", () => {
+    it("이름, 이메일, 비밀번호, 비밀번호 확인 입력 필드와 회원가입 버튼을 렌더링한다", () => {
       render(<SignupForm />);
+      expect(screen.getByLabelText("이름")).toBeInTheDocument();
       expect(screen.getByLabelText("이메일")).toBeInTheDocument();
       expect(screen.getByLabelText("비밀번호")).toBeInTheDocument();
+      expect(screen.getByLabelText("비밀번호 확인")).toBeInTheDocument();
       expect(
         screen.getByRole("button", { name: "회원가입" })
       ).toBeInTheDocument();
@@ -72,8 +74,19 @@ describe("SignupForm", () => {
       expect(loginLink).toHaveAttribute("href", "/signin");
     });
 
+    it("이름을 입력하지 않으면 필수 입력 오류가 표시된다", async () => {
+      render(<SignupForm />);
+      await act(async () => {
+        fireEvent.click(screen.getByRole("button", { name: "회원가입" }));
+      });
+      expect(screen.getByText("이름을 입력해 주세요")).toBeInTheDocument();
+    });
+
     it("이메일을 입력하지 않으면 필수 입력 오류가 표시된다", async () => {
       render(<SignupForm />);
+      fireEvent.change(screen.getByLabelText("이름"), {
+        target: { value: "홍길동" },
+      });
       await act(async () => {
         fireEvent.click(screen.getByRole("button", { name: "회원가입" }));
       });
@@ -82,6 +95,9 @@ describe("SignupForm", () => {
 
     it("eluocnc.com 외 도메인 입력 시 도메인 오류가 표시된다", async () => {
       render(<SignupForm />);
+      fireEvent.change(screen.getByLabelText("이름"), {
+        target: { value: "홍길동" },
+      });
       fireEvent.change(screen.getByLabelText("이메일"), {
         target: { value: "test@gmail.com" },
       });
@@ -95,6 +111,9 @@ describe("SignupForm", () => {
 
     it("비밀번호가 8자 미만이면 길이 오류가 표시된다", async () => {
       render(<SignupForm />);
+      fireEvent.change(screen.getByLabelText("이름"), {
+        target: { value: "홍길동" },
+      });
       fireEvent.change(screen.getByLabelText("이메일"), {
         target: { value: "test@eluocnc.com" },
       });
@@ -109,20 +128,107 @@ describe("SignupForm", () => {
       ).toBeInTheDocument();
     });
 
-    it("이미 가입된 이메일 오류 시 로그인 페이지 이동 링크가 표시된다", () => {
+    it("비밀번호와 비밀번호 확인이 일치하지 않으면 오류가 표시된다", async () => {
+      render(<SignupForm />);
+      fireEvent.change(screen.getByLabelText("이름"), {
+        target: { value: "홍길동" },
+      });
+      fireEvent.change(screen.getByLabelText("이메일"), {
+        target: { value: "test@eluocnc.com" },
+      });
+      fireEvent.change(screen.getByLabelText("비밀번호"), {
+        target: { value: "password123" },
+      });
+      fireEvent.change(screen.getByLabelText("비밀번호 확인"), {
+        target: { value: "different123" },
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByRole("button", { name: "회원가입" }));
+      });
+      expect(
+        screen.getByText("비밀번호가 일치하지 않습니다")
+      ).toBeInTheDocument();
+    });
+
+    it("비밀번호 확인을 입력하지 않으면 필수 입력 오류가 표시된다", async () => {
+      render(<SignupForm />);
+      fireEvent.change(screen.getByLabelText("이름"), {
+        target: { value: "홍길동" },
+      });
+      fireEvent.change(screen.getByLabelText("이메일"), {
+        target: { value: "test@eluocnc.com" },
+      });
+      fireEvent.change(screen.getByLabelText("비밀번호"), {
+        target: { value: "password123" },
+      });
+      await act(async () => {
+        fireEvent.click(screen.getByRole("button", { name: "회원가입" }));
+      });
+      expect(
+        screen.getByText("비밀번호 확인을 입력해 주세요")
+      ).toBeInTheDocument();
+    });
+
+  });
+
+  describe("duplicate step", () => {
+    beforeEach(() => {
       setupMockStates({
         error: "이미 가입된 이메일입니다",
-        step: "form",
+        step: "duplicate",
         email: "",
       });
+    });
+
+    it("이미 가입된 이메일 카드를 렌더링한다", () => {
       render(<SignupForm />);
       expect(
         screen.getByText("이미 가입된 이메일입니다")
       ).toBeInTheDocument();
-      const loginLink = screen.getByRole("link", {
-        name: "로그인 페이지로 이동",
-      });
+      expect(
+        screen.getByText(/입력하신 이메일은 이미 가입된 계정입니다/)
+      ).toBeInTheDocument();
+    });
+
+    it('"로그인으로 이동" 링크가 /signin으로 이동한다', () => {
+      render(<SignupForm />);
+      const loginLink = screen.getByRole("link", { name: "로그인으로 이동" });
       expect(loginLink).toHaveAttribute("href", "/signin");
+    });
+
+    it('"다른 이메일로 가입하기" 클릭 시 회원가입 폼으로 복귀한다', async () => {
+      let signupCallCount = 0;
+      (React.useActionState as jest.Mock).mockImplementation(
+        (action: unknown) => {
+          if (action === signup) {
+            signupCallCount++;
+            if (signupCallCount === 1) {
+              return [
+                { error: "이미 가입된 이메일입니다", step: "duplicate", email: "" },
+                jest.fn(),
+                false,
+              ];
+            }
+            return [{ error: "", step: "form", email: "" }, jest.fn(), false];
+          }
+          if (action === verifyOtp) return [{ error: "" }, jest.fn(), false];
+          return [{ error: "", success: false, isRateLimited: false }, jest.fn(), false];
+        }
+      );
+
+      render(<SignupForm />);
+      expect(screen.getByText("이미 가입된 이메일입니다")).toBeInTheDocument();
+
+      const resetButton = screen.getByRole("button", {
+        name: "다른 이메일로 가입하기",
+      });
+      await act(async () => {
+        fireEvent.click(resetButton);
+      });
+
+      expect(
+        screen.getByRole("button", { name: "회원가입" })
+      ).toBeInTheDocument();
     });
   });
 

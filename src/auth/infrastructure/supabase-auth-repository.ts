@@ -30,9 +30,22 @@ export class SupabaseAuthRepository implements AuthRepository {
     const { data, error } = await supabase.auth.signUp({
       email: credentials.email.toLowerCase(),
       password: credentials.password,
+      options: {
+        data: {
+          display_name: credentials.name,
+        },
+      },
     });
 
     if (error) {
+      // 레이트 리밋: 미인증 계정에 OTP 재발송 시 발생. 기존 OTP가 유효하므로 인증 단계로 전환
+      const isRateLimit =
+        error.status === 429 ||
+        error.message.toLowerCase().includes("rate limit") ||
+        error.message.toLowerCase().includes("email rate");
+      if (isRateLimit) {
+        return { success: "pending" };
+      }
       return { success: false, error: error.message };
     }
 

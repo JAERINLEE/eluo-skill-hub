@@ -14,6 +14,7 @@ describe("SignupUseCase", () => {
     const useCase = new SignupUseCase(repository);
 
     const result = await useCase.execute({
+      name: "홍길동",
       email: "user@eluocnc.com",
       password: "password123",
     });
@@ -29,6 +30,7 @@ describe("SignupUseCase", () => {
     const useCase = new SignupUseCase(repository);
 
     const result = await useCase.execute({
+      name: "홍길동",
       email: "existing@eluocnc.com",
       password: "password123",
     });
@@ -44,6 +46,7 @@ describe("SignupUseCase", () => {
     const useCase = new SignupUseCase(repository);
 
     const result = await useCase.execute({
+      name: "홍길동",
       email: "user@eluocnc.com",
       password: "password123",
     });

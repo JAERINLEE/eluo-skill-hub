@@ -24,8 +24,13 @@ export async function signup(
   _prevState: SignupActionState,
   formData: FormData
 ): Promise<SignupActionState> {
+  const name = formData.get("name");
   const email = formData.get("email");
   const password = formData.get("password");
+
+  if (typeof name !== "string" || name.trim() === "") {
+    return { error: "이름을 입력해 주세요", step: "form", email: "" };
+  }
 
   if (typeof email !== "string" || email.trim() === "") {
     return { error: "이메일을 입력해 주세요", step: "form", email: "" };
@@ -50,13 +55,16 @@ export async function signup(
   const repository = new SupabaseAuthRepository();
   const useCase = new SignupUseCase(repository);
 
-  const result = await useCase.execute({ email: email.toLowerCase(), password });
+  const result = await useCase.execute({ name: name.trim(), email: email.toLowerCase(), password });
 
   if (result.success === "pending") {
     return { error: "", step: "verify", email: email.toLowerCase() };
   }
 
   if (!result.success) {
+    if (result.error === "이미 가입된 이메일입니다") {
+      return { error: result.error, step: "duplicate", email: "" };
+    }
     return { error: result.error, step: "form", email: "" };
   }
 
