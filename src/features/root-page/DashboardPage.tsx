@@ -3,8 +3,7 @@ import { SupabaseSkillRepository } from '@/skill-marketplace/infrastructure/Supa
 import { GetRecommendedSkillsUseCase } from '@/skill-marketplace/application/GetRecommendedSkillsUseCase';
 import { SupabaseBookmarkRepository } from '@/bookmark/infrastructure/SupabaseBookmarkRepository';
 import { GetBookmarkedSkillsUseCase } from '@/bookmark/application/GetBookmarkedSkillsUseCase';
-import { SearchBar } from './SearchBar';
-import { SkillCardGrid } from './SkillCardGrid';
+import { SearchableSkillSection } from './SearchableSkillSection';
 import type { SkillViewModel } from './types';
 
 interface DashboardPageProps {
@@ -35,11 +34,9 @@ export async function DashboardPage({ categoryName, userId }: DashboardPageProps
 
   return (
     <div className="flex-1 overflow-y-auto p-8 no-scrollbar">
-      <SearchBar />
-      <SkillCardGrid
+      <SearchableSkillSection
         skills={viewModels}
         initialBookmarkedIds={bookmarkedSkillIds}
-        title="추천 에이전트"
       />
     </div>
   );

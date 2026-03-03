@@ -9,7 +9,13 @@ export class SupabaseAuthRepository implements AuthRepository {
   constructor(private readonly supabase: SupabaseClient) {}
 
   async signUp(email: string, password: string): Promise<AuthResult> {
-    const { data, error } = await this.supabase.auth.signUp({ email, password });
+    const { data, error } = await this.supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      },
+    });
     if (error) {
       return { success: false, error: error.message, statusCode: error.status };
     }
@@ -59,6 +65,9 @@ export class SupabaseAuthRepository implements AuthRepository {
     const { error } = await this.supabase.auth.resend({
       type: "signup",
       email,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      },
     });
     if (error) {
       return { success: false, error: error.message, statusCode: error.status };

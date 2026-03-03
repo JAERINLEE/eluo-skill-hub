@@ -4,13 +4,26 @@ import { useState } from "react";
 import { SearchIcon } from "@/shared/ui/icons";
 
 const POPULAR_SEARCH_TAGS = [
-  "인기 검색어: 파이썬 스크립트",
+  "파이썬 스크립트",
   "PDF 요약기",
   "회의록 정리",
 ] as const;
 
-export function SearchBar() {
-  const [query, setQuery] = useState("");
+interface SearchBarProps {
+  query?: string;
+  onQueryChange?: (value: string) => void;
+}
+
+export function SearchBar({ query: externalQuery, onQueryChange }: SearchBarProps) {
+  const [internalQuery, setInternalQuery] = useState("");
+
+  const isControlled = externalQuery !== undefined;
+  const query = isControlled ? externalQuery : internalQuery;
+
+  const handleChange = (value: string) => {
+    if (!isControlled) setInternalQuery(value);
+    onQueryChange?.(value);
+  };
 
   return (
     <div className="max-w-4xl mx-auto mb-10">
@@ -26,17 +39,20 @@ export function SearchBar() {
           placeholder="스킬 또는 에이전트 검색..."
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => handleChange(e.target.value)}
         />
       </div>
-      <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar pb-2">
+      <div className="flex items-center gap-2 mt-4 overflow-x-auto no-scrollbar pb-2">
+        <span className="text-xs text-slate-400 whitespace-nowrap">인기 검색어:</span>
         {POPULAR_SEARCH_TAGS.map((tag) => (
-          <span
+          <button
             key={tag}
+            type="button"
+            onClick={() => handleChange(tag)}
             className="px-3 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full text-xs font-medium cursor-pointer hover:border-primary transition-colors whitespace-nowrap"
           >
             {tag}
-          </span>
+          </button>
         ))}
       </div>
     </div>

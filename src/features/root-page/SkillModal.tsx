@@ -77,19 +77,24 @@ const markdownComponents: Components = {
   ),
   hr: () => <hr className="my-6 border-slate-200 dark:border-slate-700" />,
   table: ({ children }) => (
-    <div className="overflow-x-auto mb-4 rounded-lg border border-slate-200 dark:border-slate-700">
+    <div className="overflow-x-auto mb-4 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
       <table className="w-full text-sm border-collapse">{children}</table>
     </div>
   ),
   th: ({ children }) => (
-    <th className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800 font-semibold text-left text-slate-700 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700">
+    <th className="px-4 py-3 bg-slate-100 dark:bg-slate-700 font-semibold text-left text-slate-600 dark:text-slate-300 border-b-2 border-slate-200 dark:border-slate-600 text-xs uppercase tracking-wider whitespace-nowrap">
       {children}
     </th>
   ),
   td: ({ children }) => (
-    <td className="px-4 py-2.5 text-slate-600 dark:text-slate-300 border-b border-slate-100 dark:border-slate-800 last:border-b-0">
+    <td className="px-4 py-3 text-slate-600 dark:text-slate-300 border-b border-slate-100 dark:border-slate-700/60 last:border-b-0 align-top">
       {children}
     </td>
+  ),
+  tr: ({ children }) => (
+    <tr className="even:bg-slate-50 dark:even:bg-slate-800/30 hover:bg-primary/5 transition-colors">
+      {children}
+    </tr>
   ),
   code: ({ className, children }) => {
     // rehype-highlight adds "hljs language-xxx" className to block code
@@ -104,9 +109,16 @@ const markdownComponents: Components = {
     );
   },
   pre: ({ children }) => (
-    <pre className="rounded-xl overflow-hidden mb-4 text-[13px] leading-relaxed shadow-sm border border-slate-200 dark:border-slate-700">
-      {children}
-    </pre>
+    <div className="terminal-block mb-4 rounded-xl overflow-hidden shadow-lg border border-[#333]">
+      <div className="flex items-center gap-1.5 px-4 py-2.5 bg-[#2d2d2d]">
+        <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
+        <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+        <span className="w-3 h-3 rounded-full bg-[#28ca41]" />
+      </div>
+      <pre className="text-[13px] leading-relaxed overflow-x-auto">
+        {children}
+      </pre>
+    </div>
   ),
 };
 
