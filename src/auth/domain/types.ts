@@ -10,6 +10,7 @@ export type SigninResult =
 export interface SignupCredentials {
   readonly email: string;
   readonly password: string;
+  readonly name: string;
 }
 
 export type SignupResult =
@@ -43,7 +44,7 @@ export interface SigninActionState {
 
 export interface SignupActionState {
   error: string;
-  step: "form" | "verify";
+  step: "form" | "verify" | "duplicate";
   email: string;
 }
 
