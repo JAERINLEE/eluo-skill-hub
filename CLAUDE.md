@@ -37,6 +37,10 @@
 ## Active Technologies
 - TypeScript (strict) — `any` 금지 (헌법 원칙 I) + Next.js (App Router), Tailwind CSS v4, Shadcn UI, `next/font/local` (003-landing-page-redesign)
 - N/A (순수 UI 변경) (003-landing-page-redesign)
+- TypeScript 5 (strict mode, `any` 금지) + Next.js 16.1.6 (App Router), @supabase/ssr 0.8.0, @supabase/supabase-js 2.98.0, Shadcn UI, Radix UI (004-signin-page)
+- Supabase (PostgreSQL) — `profiles` 테이블 (auth.users FK), `roles` 테이블, RLS 활성 (004-signin-page)
+- TypeScript (strict mode) — `any` 금지 + Next.js 16.1.6 (App Router), React 19.2.3, @supabase/ssr ^0.8.0, @supabase/supabase-js ^2.98.0, Shadcn UI, Tailwind CSS v4 (005-signup-page)
+- Supabase (PostgreSQL) — auth.users(Supabase Auth 관리), public.profiles, public.roles (005-signup-page)
 
 ## Recent Changes
 - 003-landing-page-redesign: Added TypeScript (strict) — `any` 금지 (헌법 원칙 I) + Next.js (App Router), Tailwind CSS v4, Shadcn UI, `next/font/local`

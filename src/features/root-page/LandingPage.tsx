@@ -16,7 +16,7 @@ export function LandingPage() {
             </p>
             <div>
               <a
-                href="/login"
+                href="/signin"
                 className="inline-flex items-center gap-2 bg-brand-yellow text-brand-navy font-semibold px-8 py-3 rounded-lg hover:opacity-90 transition-opacity"
               >
                 시작하기
