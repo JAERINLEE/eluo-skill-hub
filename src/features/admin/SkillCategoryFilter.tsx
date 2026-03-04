@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 import type { CategoryOption } from '@/admin/domain/types';
+import CategoryIcon from './CategoryIcon';
 
 interface SkillCategoryFilterProps {
   categories: CategoryOption[];
@@ -51,7 +52,8 @@ export default function SkillCategoryFilter({ categories, currentCategoryId }: S
               : 'text-slate-500 hover:text-[#000080] bg-white border border-slate-200'
           }`}
         >
-          {cat.icon} {cat.name}
+          <CategoryIcon icon={cat.icon} size={14} className="inline-block mr-1" />
+          {cat.name}
         </button>
       ))}
     </div>

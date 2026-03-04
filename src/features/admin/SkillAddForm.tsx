@@ -11,6 +11,7 @@ import type { CategoryOption, CreateSkillInput } from '@/admin/domain/types';
 import { createSkill, getCategories } from '@/app/admin/skills/actions';
 import TemplateFileUpload from './TemplateFileUpload';
 import MarkdownFileUpload from './MarkdownFileUpload';
+import CategoryIcon from './CategoryIcon';
 
 interface SkillAddFormProps {
   categories?: CategoryOption[];
@@ -270,7 +271,10 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
             <SelectContent>
               {categories.map((cat) => (
                 <SelectItem key={cat.id} value={cat.id}>
-                  {cat.name}
+                  <span className="flex items-center gap-2">
+                    <CategoryIcon icon={cat.icon} size={14} />
+                    {cat.name}
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>
