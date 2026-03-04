@@ -1,6 +1,15 @@
+'use client';
+
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import type { DashboardSkillCard as SkillCardType } from '@/dashboard/domain/types';
 import DashboardSkillCard from './DashboardSkillCard';
 import LoadMoreButton from './LoadMoreButton';
+
+const SkillDetailModal = dynamic(
+  () => import('@/features/skill-detail/SkillDetailModal'),
+  { ssr: false }
+);
 
 interface DashboardSkillGridProps {
   skills: SkillCardType[];
@@ -10,6 +19,7 @@ interface DashboardSkillGridProps {
   categoryId?: string;
   currentLimit: number;
   bookmarkedSkillIds?: string[];
+  isViewer?: boolean;
 }
 
 export default function DashboardSkillGrid({
@@ -19,7 +29,9 @@ export default function DashboardSkillGrid({
   categoryId,
   currentLimit,
   bookmarkedSkillIds,
+  isViewer = false,
 }: DashboardSkillGridProps) {
+  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const isEmpty = skills.length === 0;
   const isSearchResult = !!searchQuery;
 
@@ -51,7 +63,12 @@ export default function DashboardSkillGrid({
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {skills.map((skill) => (
-              <DashboardSkillCard key={skill.id} skill={skill} isBookmarked={bookmarkedSkillIds?.includes(skill.id)} />
+              <DashboardSkillCard
+                key={skill.id}
+                skill={skill}
+                isBookmarked={bookmarkedSkillIds?.includes(skill.id)}
+                onClick={() => setSelectedSkillId(skill.id)}
+              />
             ))}
           </div>
 
@@ -63,6 +80,14 @@ export default function DashboardSkillGrid({
             />
           )}
         </>
+      )}
+
+      {selectedSkillId && (
+        <SkillDetailModal
+          skillId={selectedSkillId}
+          isViewer={isViewer}
+          onClose={() => setSelectedSkillId(null)}
+        />
       )}
     </div>
   );

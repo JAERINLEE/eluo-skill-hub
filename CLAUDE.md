@@ -47,6 +47,10 @@
 - Supabase (PostgreSQL) — auth.users (user_metadata에 display_name 저장) (007-signup-page)
 - TypeScript 5 (strict mode, `any` 금지) + Next.js 16.1.6 (App Router), React 19.2.3, @supabase/ssr ^0.8.0, @supabase/supabase-js ^2.98.0, Shadcn UI, Tailwind CSS v4 (007-signup-page)
 - Supabase (PostgreSQL) — `auth.users` (Supabase Auth 관리), `user_metadata.display_name` (007-signup-page)
+- TypeScript 5 (strict, `any` PROHIBITED) + Next.js 16.1.6 (App Router), React 19.2.3, Tailwind CSS v4, Shadcn UI (Radix UI), `react-markdown` ^10.1.0, `lucide-react` ^0.576.0, `sonner` ^2.0.7 (016-skill-detail-popup)
+- Supabase PostgreSQL + Supabase Storage (템플릿 파일 signed URL) (016-skill-detail-popup)
+- TypeScript 5 (strict mode, `any` 금지) + Next.js 16.1.6 (App Router), React 19.2.3, react-markdown ^10.1.0, remark-gfm ^4.0.1, rehype-highlight ^7.0.2, rehype-sanitize ^6.0.0, gray-matter (신규 추가) (017-markdown-render-custom)
+- N/A (순수 프론트엔드 변경, DB 스키마 변경 없음) (017-markdown-render-custom)
 
 ## Recent Changes
 - 003-landing-page-redesign: Added TypeScript (strict) — `any` 금지 (헌법 원칙 I) + Next.js (App Router), Tailwind CSS v4, Shadcn UI, `next/font/local`

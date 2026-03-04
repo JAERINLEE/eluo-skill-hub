@@ -1,0 +1,396 @@
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00007F",
+                        "accent": "#FEFE01",
+                        "neutral-light": "#F0F0F0",
+                        "deep-blue": "#00007F",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "Noto Sans KR", "sans-serif"],
+                        "sans": ["Noto Sans KR", "Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.375rem", "xl": "0.5rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        :root {
+            --deep-blue: #00007F;
+            --yellow: #FEFE01;
+            --light-gray: #F0F0F0;
+        }
+        body { font-family: 'Noto Sans KR', 'Inter', sans-serif; }
+        .notion-shadow { 
+            box-shadow: rgba(0, 0, 127, 0.04) 0px 0px 0px 1px, rgba(0, 0, 127, 0.08) 0px 10px 30px -5px; 
+        }
+        .glass-overlay {
+            background: rgba(0, 0, 127, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .modal-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, #f9f9f9 100%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .inner-glow {
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        h1, h2, h3, h4, h5, h6 { color: var(--deep-blue); }
+        .body-text { color: #1a1a1a; }
+        .action-button {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .action-button:hover {
+            transform: scale(1.02);
+            filter: brightness(1.2);
+        }
+        .list-item-hover {
+            transition: all 0.2s ease;
+        }
+        .list-item-hover:hover {
+            background-color: rgba(0, 0, 127, 0.03);
+            border-color: rgba(0, 0, 127, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-[#F0F0F0] font-sans text-black">
+    <div class="relative flex h-screen w-full flex-col overflow-hidden">
+        <header class="flex items-center justify-between border-b border-slate-200 bg-white px-8 py-3 z-10">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-3">
+                    <div class="size-8 bg-[var(--deep-blue)] rounded flex items-center justify-center text-white">
+                        <span class="material-symbols-outlined">support_agent</span>
+                    </div>
+                    <h2 class="text-lg font-bold tracking-tight">AI 스킬 허브</h2>
+                </div>
+                <nav class="hidden md:flex items-center gap-6">
+                    <a class="text-sm font-medium text-slate-600 hover:text-[var(--deep-blue)]" href="#">마켓플레이스</a>
+                    <a class="text-sm font-medium text-slate-600 hover:text-[var(--deep-blue)]" href="#">내 에이전트</a>
+                    <a class="text-sm font-medium text-slate-600 hover:text-[var(--deep-blue)]" href="#">템플릿</a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="bg-slate-100 rounded-full px-4 py-1.5 flex items-center gap-2 border border-slate-200">
+                    <span class="material-symbols-outlined text-slate-500 text-lg">search</span>
+                    <input class="bg-transparent border-none focus:ring-0 text-sm w-48 placeholder:text-slate-400"
+                        placeholder="스킬 검색..." type="text" />
+                </div>
+                <button class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <div class="h-8 w-8 rounded-full bg-slate-300 overflow-hidden border border-slate-200">
+                    <img alt="사용자 프로필" class="h-full w-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuB16DT7K4w3us42B-ms4rnjAnEFAoRRP_s6yvsMGI0Ho8KmRaSruaf-dBndUuDN1fz1tA28PivT30PN9dAsBxOMLSRhW2MDVVUDMwWIfImdeXqyFePTD4Vy3y5rrU6L0ghlRQZf35YzXz52F2iRAjW1jRoQfQeS5zUOPT89xEkLGfAoS6EhECUNce2njerZ4lazbBNoXBoNG7itb5wx0OkBrtFdfTTAr2HfQrNCcFetfaYq-UqrqaThY4TGdTGzS5xjdJENAmfG_pOC" />
+                </div>
+            </div>
+        </header>
+        <main class="flex-1 p-8 overflow-y-auto bg-[#F0F0F0] relative">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-20 pointer-events-none">
+                <div class="p-6 bg-white rounded border border-slate-200 shadow-sm">
+                    <div class="text-4xl mb-4">✍️</div>
+                    <div class="h-4 w-3/4 bg-slate-200 rounded mb-2"></div>
+                    <div class="h-3 w-1/2 bg-slate-100 rounded"></div>
+                </div>
+                <div class="p-6 bg-white rounded border border-slate-200 shadow-sm">
+                    <div class="text-4xl mb-4">📊</div>
+                    <div class="h-4 w-3/4 bg-slate-200 rounded mb-2"></div>
+                    <div class="h-3 w-1/2 bg-slate-100 rounded"></div>
+                </div>
+                <div class="p-6 bg-white rounded border border-slate-200 shadow-sm">
+                    <div class="text-4xl mb-4">🔍</div>
+                    <div class="h-4 w-3/4 bg-slate-200 rounded mb-2"></div>
+                    <div class="h-3 w-1/2 bg-slate-100 rounded"></div>
+                </div>
+            </div>
+            <div class="fixed inset-0 glass-overlay flex items-center justify-center z-50 p-4">
+                <div
+                    class="modal-gradient w-full max-w-6xl max-h-[92vh] overflow-hidden rounded-2xl notion-shadow flex flex-col md:flex-row relative">
+                    <button
+                        class="absolute top-6 right-6 h-10 w-10 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-slate-500 hover:text-[var(--deep-blue)] transition-all z-10 border border-slate-200/50 shadow-sm active:scale-95">
+                        <span class="material-symbols-outlined text-2xl">close</span>
+                    </button>
+                    <div class="flex-1 overflow-y-auto p-8 md:p-14 scrollbar-hide">
+                        <div class="mb-12">
+                            <div class="text-8xl mb-8 drop-shadow-sm">🖋️</div>
+                            <h1 class="text-4xl font-bold tracking-tight mb-4 leading-tight">창의적 글쓰기 어시스턴트</h1>
+                            <div class="flex flex-wrap items-center gap-4 text-slate-500 text-sm">
+                                <span class="flex items-center gap-1.5"><span
+                                        class="material-symbols-outlined text-[18px]">verified_user</span> AI 스튜디오
+                                    제작</span>
+                                <span class="text-slate-300">/</span>
+                                <span class="flex items-center gap-1.5 text-[var(--deep-blue)] font-semibold"><span
+                                        class="material-symbols-outlined text-[18px] fill-1">star</span> 4.8 (1.2k
+                                    리뷰)</span>
+                                <span class="text-slate-300">/</span>
+                                <span
+                                    class="bg-[var(--yellow)] px-3 py-1 text-[var(--deep-blue)] font-bold text-xs rounded-full shadow-sm">인기
+                                    급상승</span>
+                            </div>
+                        </div>
+                        <div class="space-y-16">
+                            <section>
+                                <h3 class="text-xl font-bold mb-5 flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[var(--deep-blue)]/40">subject</span> 상세
+                                    설명
+                                </h3>
+                                <p class="body-text text-lg leading-relaxed opacity-90">
+                                    이 고급 창의적 글쓰기 에이전트로 사내 커뮤니케이션의 수준을 높여보세요. 직원들이 브랜드의 톤앤매너를 유지하면서 설득력 있는 이메일, 사내 공지문,
+                                    발표 스크립트를 작성할 수 있도록 설계되었습니다.
+                                </p>
+                            </section>
+                            <section>
+                                <h3 class="text-xl font-bold mb-6 flex items-center gap-2.5">
+                                    <span class="material-symbols-outlined text-[var(--deep-blue)]/40">lightbulb</span>
+                                    사용 방법
+                                </h3>
+                                <div class="grid gap-4">
+                                    <div
+                                        class="flex gap-5 p-5 rounded-xl bg-white border border-slate-100 list-item-hover group">
+                                        <span
+                                            class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg bg-[var(--deep-blue)]/10 text-[var(--deep-blue)] text-sm font-bold group-hover:bg-[var(--deep-blue)] group-hover:text-white transition-colors">1</span>
+                                        <span class="body-text text-[17px] self-center">프롬프트 템플릿을 클립보드에 복사합니다.</span>
+                                    </div>
+                                    <div
+                                        class="flex gap-5 p-5 rounded-xl bg-white border border-slate-100 list-item-hover group">
+                                        <span
+                                            class="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg bg-[var(--deep-blue)]/10 text-[var(--deep-blue)] text-sm font-bold group-hover:bg-[var(--deep-blue)] group-hover:text-white transition-colors">2</span>
+                                        <span class="body-text text-[17px] self-center">사내 LLM 서비스(ChatGPT, Claude 등)에
+                                            붙여넣습니다.</span>
+                                    </div>
+                                </div>
+                            </section>
+                            <section>
+                                <h3 class="text-xl font-bold mb-6 flex items-center gap-2.5">
+                                    <span
+                                        class="material-symbols-outlined text-[var(--deep-blue)]/40">inventory_2</span>
+                                    포함된 파일 및 기능
+                                </h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div
+                                        class="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-100 list-item-hover">
+                                        <div
+                                            class="size-10 rounded-lg bg-[var(--light-gray)] flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-[var(--deep-blue)]">description</span>
+                                        </div>
+                                        <div>
+                                            <div class="text-[15px] font-bold body-text">Prompt_Template.md</div>
+                                            <div
+                                                class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">
+                                                시스템 프롬프트</div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-100 list-item-hover">
+                                        <div
+                                            class="size-10 rounded-lg bg-[var(--light-gray)] flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-[var(--deep-blue)]">auto_fix</span>
+                                        </div>
+                                        <div>
+                                            <div class="text-[15px] font-bold body-text">톤앤매너 조정기</div>
+                                            <div
+                                                class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">
+                                                로직 모듈</div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-100 list-item-hover">
+                                        <div
+                                            class="size-10 rounded-lg bg-[var(--light-gray)] flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-[var(--deep-blue)]">library_books</span>
+                                        </div>
+                                        <div>
+                                            <div class="text-[15px] font-bold body-text">Brand_Voice.json</div>
+                                            <div
+                                                class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">
+                                                지식 베이스</div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex items-center gap-4 p-4 rounded-xl bg-white border border-slate-100 list-item-hover">
+                                        <div
+                                            class="size-10 rounded-lg bg-[var(--light-gray)] flex items-center justify-center">
+                                            <span
+                                                class="material-symbols-outlined text-[var(--deep-blue)]">translate</span>
+                                        </div>
+                                        <div>
+                                            <div class="text-[15px] font-bold body-text">다국어 지원</div>
+                                            <div
+                                                class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">
+                                                번역 모듈</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            <section class="pt-8">
+                                <h3 class="text-xl font-bold mb-8 flex items-center gap-2.5">
+                                    <span
+                                        class="material-symbols-outlined text-[var(--deep-blue)]/40">rate_review</span>
+                                    피드백 및 리뷰
+                                </h3>
+                                <div
+                                    class="bg-white/60 backdrop-blur-sm rounded-2xl p-8 mb-10 border border-white shadow-sm">
+                                    <div class="flex flex-col gap-6">
+                                        <div class="flex items-center gap-5">
+                                            <span class="text-sm font-bold body-text">사용자 평점</span>
+                                            <div class="flex items-center gap-1.5">
+                                                <button
+                                                    class="text-[var(--deep-blue)] material-symbols-outlined fill-1 transition-transform hover:scale-125">star</button>
+                                                <button
+                                                    class="text-[var(--deep-blue)] material-symbols-outlined fill-1 transition-transform hover:scale-125">star</button>
+                                                <button
+                                                    class="text-[var(--deep-blue)] material-symbols-outlined fill-1 transition-transform hover:scale-125">star</button>
+                                                <button
+                                                    class="text-[var(--deep-blue)] material-symbols-outlined fill-1 transition-transform hover:scale-125">star</button>
+                                                <button
+                                                    class="text-slate-300 material-symbols-outlined transition-transform hover:scale-125">star</button>
+                                            </div>
+                                        </div>
+                                        <div class="relative">
+                                            <textarea
+                                                class="w-full bg-white border border-slate-200 rounded-xl p-5 text-[15px] focus:ring-4 focus:ring-[var(--deep-blue)]/5 focus:border-[var(--deep-blue)] transition-all resize-none min-h-[120px] body-text placeholder:text-slate-400"
+                                                placeholder="사용 후기를 자유롭게 남겨주세요..."></textarea>
+                                            <div class="flex justify-end mt-4">
+                                                <button
+                                                    class="action-button bg-[var(--yellow)] text-[var(--deep-blue)] text-sm font-bold py-3 px-8 rounded-full flex items-center gap-2 border border-[var(--deep-blue)]/5 shadow-sm">
+                                                    <span class="material-symbols-outlined text-xl">send</span>
+                                                    피드백 제출
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="space-y-8">
+                                    <div class="flex gap-6 p-2">
+                                        <div
+                                            class="size-12 rounded-full bg-slate-200 ring-2 ring-white overflow-hidden flex-shrink-0 shadow-sm">
+                                            <img alt="avatar" class="w-full h-full object-cover"
+                                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPkV2k3lqgWKd98TLrJGS1hfUwfxl1exOJ9doFOkHa7_o6nc1Mt-u_KYcF7ZWD1po1-emn5cy2oJVVvhq0cHgs5tZOoKGySeH_bWWRvfSHP0CnysmChwIn-bQ59I-aovLBytyrARMww0-pAbkIMlznaPhteooGKd43t3V6sjxhvKJ8rfzRX66rqMJ3msM8XHC9PQpVxpTUEONVxxeUJso1ocw5V_sXtvfBgE3twYTEl-PFbjD3Snvwu_nptGpLbQBbguqkVEWGmiCz" />
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div class="flex items-center gap-3">
+                                                    <span class="text-base font-bold body-text">김철수 매니저</span>
+
+                                                </div>
+                                                <span class="text-xs text-slate-400">2시간 전</span>
+                                            </div>
+                                            <div class="flex items-center gap-1 mb-3">
+                                                <span
+                                                    class="text-[16px] text-[var(--deep-blue)] material-symbols-outlined fill-1">star</span>
+                                                <span
+                                                    class="text-[16px] text-[var(--deep-blue)] material-symbols-outlined fill-1">star</span>
+                                                <span
+                                                    class="text-[16px] text-[var(--deep-blue)] material-symbols-outlined fill-1">star</span>
+                                                <span
+                                                    class="text-[16px] text-[var(--deep-blue)] material-symbols-outlined fill-1">star</span>
+                                                <span
+                                                    class="text-[16px] text-[var(--deep-blue)] material-symbols-outlined fill-1">star</span>
+                                            </div>
+                                            <p class="text-base body-text leading-relaxed opacity-80">정말 유용해요! 특히 톤앤매너
+                                                조정 기능 덕분에 이메일 작성 시간이 절반으로 줄었습니다.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-6 p-2">
+                                        <div
+                                            class="size-12 rounded-full bg-slate-200 ring-2 ring-white overflow-hidden flex-shrink-0 shadow-sm">
+                                            <img alt="avatar" class="w-full h-full object-cover"
+                                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5iX21tRV_N3WLrZ9GpsgGOTisxmcXSrDh3S_6wByS9TF5hEgs4h3pDdxbPPwITRUZ7LtvP6fvC6eCkHzFiOnaR5pJJrbzcCeKeUa-qDBM3XoiGWfPGNWReQTqPovANpT9IxPusYS1cHcNbaOFyf2E_uuEFJ9YnW9olKiXO6ZIZriel7__loKHkMqTrEd20M59NgDjiQf6-YUfZnAjybnIConrMWd4GsfoIeO4FdCsTkhzIvErhFlmJoRS6pfsIaJJtVWZduvxZ3Wb" />
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div class="flex items-center gap-3">
+                                                    <span class="text-base font-bold body-text">이영희 팀장</span>
+
+                                                </div>
+                                                <span class="text-xs text-slate-400">어제</span>
+                                            </div>
+                                            <div class="flex items-center gap-1 mb-3">
+                                                <span
+                                                    class="text-[16px] text-[var(--deep-blue)] material-symbols-outlined fill-1">star</span>
+                                                <span
+                                                    class="text-[16px] text-[var(--deep-blue)] material-symbols-outlined fill-1">star</span>
+                                                <span
+                                                    class="text-[16px] text-[var(--deep-blue)] material-symbols-outlined fill-1">star</span>
+                                                <span
+                                                    class="text-[16px] text-[var(--deep-blue)] material-symbols-outlined fill-1">star</span>
+                                                <span
+                                                    class="text-[16px] text-slate-300 material-symbols-outlined fill-1">star</span>
+                                            </div>
+                                            <p class="text-base body-text leading-relaxed opacity-80">이런 기능이 더 있으면 좋겠어요:
+                                                사내 위키와 연동되어 최신 용어를 자동으로 제안해주는 기능이 추가되면 완벽할 것 같습니다.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                    <div
+                        class="w-full md:w-96 bg-[var(--light-gray)]/50 border-t md:border-t-0 md:border-l border-slate-200/50 p-10 flex flex-col gap-6 backdrop-blur-md">
+                        <div>
+                            <h4 class="text-[11px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-5">실행하기
+                            </h4>
+                            <div class="space-y-4">
+                                <button
+                                    class="action-button inner-glow w-full flex items-center justify-center gap-3 bg-[var(--deep-blue)] text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-[var(--deep-blue)]/20 active:scale-[0.98]">
+                                    <span class="material-symbols-outlined text-2xl">download</span>
+                                    <span class="text-base">템플릿 다운로드</span>
+                                </button>
+
+                            </div>
+                        </div>
+                        <div class="mt-8 pt-8 border-t border-slate-200">
+                            <div class="p-6 bg-white/80 rounded-2xl border border-white shadow-sm">
+                                <h5
+                                    class="text-[11px] font-extrabold text-[var(--deep-blue)] uppercase tracking-wider mb-5 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">info</span> 스킬 상세 정보
+                                </h5>
+                                <div class="space-y-4 text-[13px] body-text">
+                                    <div class="flex justify-between items-center group">
+                                        <span class="text-slate-500">최근 업데이트</span>
+                                        <span class="font-bold">2023.10.12</span>
+                                    </div>
+                                    <div class="flex justify-between items-center group">
+                                        <span class="text-slate-500">파일 크기</span>
+                                        <span class="font-bold">2.4 MB</span>
+                                    </div>
+                                    <div class="flex justify-between items-center group">
+                                        <span class="text-slate-500">카테고리</span>
+                                        <span class="font-bold">콘텐츠 제작</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+</body>
+
+</html>
