@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { X, Info } from 'lucide-react';
 import { getSkillDetailAction, getSkillFeedbacksAction } from '@/app/(portal)/dashboard/actions';
 import type { SkillDetailPopup, FeedbackWithReplies } from '@/skill-detail/domain/types';
@@ -8,6 +8,17 @@ import SkillDetailHeader from './SkillDetailHeader';
 import SkillDetailGuide from './SkillDetailGuide';
 import FeedbackSection from './FeedbackSection';
 import TemplateDownloadButton from './TemplateDownloadButton';
+
+// --- Stale-While-Revalidate 캐시 ---
+interface CachedSkillData {
+  skill: SkillDetailPopup;
+  feedbacks: FeedbackWithReplies[];
+  hasMore: boolean;
+  cachedAt: number;
+}
+
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5분
+const skillCache = new Map<string, CachedSkillData>();
 
 interface SkillDetailModalProps {
   skillId: string;
@@ -35,37 +46,110 @@ export default function SkillDetailModal({
   isViewer,
   onClose,
 }: SkillDetailModalProps) {
-  const [skill, setSkill] = useState<SkillDetailPopup | null>(null);
-  const [feedbacks, setFeedbacks] = useState<FeedbackWithReplies[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cached = skillCache.get(skillId);
+  const hasFreshCache = cached && Date.now() - cached.cachedAt < CACHE_TTL_MS;
+
+  const [skill, setSkill] = useState<SkillDetailPopup | null>(hasFreshCache ? cached.skill : null);
+  const [feedbacks, setFeedbacks] = useState<FeedbackWithReplies[]>(hasFreshCache ? cached.feedbacks : []);
+  const [hasMoreFeedbacks, setHasMoreFeedbacks] = useState(hasFreshCache ? cached.hasMore : false);
+  const [feedbackOffset, setFeedbackOffset] = useState(hasFreshCache ? cached.feedbacks.length : 0);
+  const [loadingMoreFeedbacks, setLoadingMoreFeedbacks] = useState(false);
+  const [loading, setLoading] = useState(!hasFreshCache);
   const [error, setError] = useState<string | null>(null);
+  const abortRef = useRef(false);
 
-  const loadData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    const [skillResult, feedbackResult] = await Promise.all([
-      getSkillDetailAction(skillId),
-      getSkillFeedbacksAction(skillId),
-    ]);
+  const applyFetchResult = useCallback((
+    skillResult: Awaited<ReturnType<typeof getSkillDetailAction>>,
+    feedbackResult: Awaited<ReturnType<typeof getSkillFeedbacksAction>>,
+  ) => {
+    if (abortRef.current) return;
 
     if (!skillResult.success) {
-      setError(skillResult.error);
+      // 캐시가 없을 때만 에러 표시 (캐시가 있으면 기존 데이터 유지)
+      if (!skillCache.has(skillId)) {
+        setError(skillResult.error);
+      }
       setLoading(false);
       return;
     }
 
     setSkill(skillResult.skill);
+    setError(null);
 
     if (feedbackResult.success) {
       setFeedbacks(feedbackResult.feedbacks);
+      setHasMoreFeedbacks(feedbackResult.hasMore);
+      setFeedbackOffset(feedbackResult.feedbacks.length);
+
+      // 캐시 갱신
+      skillCache.set(skillId, {
+        skill: skillResult.skill,
+        feedbacks: feedbackResult.feedbacks,
+        hasMore: feedbackResult.hasMore,
+        cachedAt: Date.now(),
+      });
     }
 
     setLoading(false);
   }, [skillId]);
 
+  const fetchFromServer = useCallback(async () => {
+    const [skillResult, feedbackResult] = await Promise.all([
+      getSkillDetailAction(skillId),
+      getSkillFeedbacksAction(skillId),
+    ]);
+    applyFetchResult(skillResult, feedbackResult);
+  }, [skillId, applyFetchResult]);
+
+  const loadData = useCallback(async () => {
+    abortRef.current = false;
+    setError(null);
+
+    // 캐시 히트: 즉시 표시 + 백그라운드 갱신
+    if (hasFreshCache) {
+      setLoading(false);
+      fetchFromServer();
+      return;
+    }
+
+    // 캐시 미스: 로딩 표시 후 fetch
+    setLoading(true);
+    await fetchFromServer();
+  }, [hasFreshCache, fetchFromServer]);
+
+  const loadMoreFeedbacks = useCallback(async () => {
+    if (loadingMoreFeedbacks || !hasMoreFeedbacks) return;
+    setLoadingMoreFeedbacks(true);
+
+    const result = await getSkillFeedbacksAction(skillId, feedbackOffset);
+
+    if (!abortRef.current && result.success) {
+      setFeedbacks((prev) => {
+        const updated = [...prev, ...result.feedbacks];
+        // 캐시도 함께 업데이트
+        const existing = skillCache.get(skillId);
+        if (existing) {
+          skillCache.set(skillId, {
+            ...existing,
+            feedbacks: updated,
+            hasMore: result.hasMore,
+            cachedAt: Date.now(),
+          });
+        }
+        return updated;
+      });
+      setHasMoreFeedbacks(result.hasMore);
+      setFeedbackOffset((prev) => prev + result.feedbacks.length);
+    }
+
+    setLoadingMoreFeedbacks(false);
+  }, [skillId, feedbackOffset, hasMoreFeedbacks, loadingMoreFeedbacks]);
+
   useEffect(() => {
     loadData();
+    return () => {
+      abortRef.current = true;
+    };
   }, [loadData]);
 
   // ESC key + body overflow lock
@@ -130,7 +214,13 @@ export default function SkillDetailModal({
             <div className="space-y-16">
               <SkillDetailHeader skill={skill} />
               <SkillDetailGuide markdownContent={skill.markdownContent} />
-              <FeedbackSection skillId={skillId} initialFeedbacks={feedbacks} />
+              <FeedbackSection
+                skillId={skillId}
+                initialFeedbacks={feedbacks}
+                hasMore={hasMoreFeedbacks}
+                loadingMore={loadingMoreFeedbacks}
+                onLoadMore={loadMoreFeedbacks}
+              />
             </div>
           ) : null}
         </div>

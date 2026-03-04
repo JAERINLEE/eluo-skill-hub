@@ -67,7 +67,8 @@ export async function getSkillDetailAction(
 }
 
 export async function getSkillFeedbacksAction(
-  skillId: string
+  skillId: string,
+  offset: number = 0
 ): Promise<GetFeedbacksResult> {
   const supabase = await createClient();
   const {
@@ -80,7 +81,7 @@ export async function getSkillFeedbacksAction(
 
   const repository = new SupabaseSkillDetailRepository();
   const useCase = new GetFeedbacksUseCase(repository);
-  return useCase.execute(skillId);
+  return useCase.execute(skillId, 20, offset);
 }
 
 export async function submitFeedbackAction(

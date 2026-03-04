@@ -51,13 +51,20 @@ export interface SubmitReplyInput {
   readonly content: string;
 }
 
+// 페이지네이션 피드백
+export interface PaginatedFeedbacks {
+  readonly feedbacks: FeedbackWithReplies[];
+  readonly totalCount: number;
+  readonly hasMore: boolean;
+}
+
 // 결과 타입
 export type GetSkillDetailResult =
   | { success: true; skill: SkillDetailPopup }
   | { success: false; error: string };
 
 export type GetFeedbacksResult =
-  | { success: true; feedbacks: FeedbackWithReplies[] }
+  | { success: true; feedbacks: FeedbackWithReplies[]; totalCount: number; hasMore: boolean }
   | { success: false; error: string };
 
 export type SubmitFeedbackResult =

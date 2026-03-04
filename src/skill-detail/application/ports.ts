@@ -1,5 +1,6 @@
 import type {
   SkillDetailPopup,
+  PaginatedFeedbacks,
   FeedbackWithReplies,
   FeedbackReply,
   SubmitFeedbackInput,
@@ -8,7 +9,7 @@ import type {
 
 export interface ISkillDetailRepository {
   getSkillDetailPopup(skillId: string): Promise<SkillDetailPopup | null>;
-  getFeedbacksWithReplies(skillId: string): Promise<FeedbackWithReplies[]>;
+  getFeedbacksWithReplies(skillId: string, limit?: number, offset?: number): Promise<PaginatedFeedbacks>;
   submitFeedback(userId: string, input: SubmitFeedbackInput): Promise<FeedbackWithReplies>;
   submitReply(userId: string, input: SubmitReplyInput): Promise<FeedbackReply>;
   getTemplateSignedUrl(filePath: string, bucket: string): Promise<string>;

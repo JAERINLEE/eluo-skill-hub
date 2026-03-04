@@ -3,6 +3,7 @@ import type { ISkillDetailRepository } from '../application/ports';
 import type {
   SkillDetailPopup,
   SkillTemplateInfo,
+  PaginatedFeedbacks,
   FeedbackWithReplies,
   FeedbackReply,
   SubmitFeedbackInput,
@@ -39,32 +40,31 @@ export class SupabaseSkillDetailRepository implements ISkillDetailRepository {
 
     if (error || !skill) return null;
 
-    // Get author name via separate profiles query (skills.author_id -> auth.users, no direct FK to profiles)
+    // Parallelize independent queries: author profile, templates, feedback stats
     const authorId = skill.author_id as string | null;
-    let authorName: string | null = null;
-    if (authorId) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('name')
-        .eq('id', authorId)
-        .single();
-      authorName = (profile?.name as string | null) ?? null;
-    }
 
-    // Get templates
-    const { data: templates } = await supabase
-      .from('skill_templates')
-      .select('id, file_name, file_path, file_size, file_type')
-      .eq('skill_id', skillId)
-      .order('created_at', { ascending: true });
+    const [authorResult, templatesResult, feedbackStatsResult] = await Promise.all([
+      // Author name (only if author_id exists)
+      authorId
+        ? supabase.from('profiles').select('name').eq('id', authorId).single()
+        : Promise.resolve({ data: null }),
+      // Templates
+      supabase
+        .from('skill_templates')
+        .select('id, file_name, file_path, file_size, file_type')
+        .eq('skill_id', skillId)
+        .order('created_at', { ascending: true }),
+      // Feedback stats
+      supabase
+        .from('skill_feedback_logs')
+        .select('rating')
+        .eq('skill_id', skillId),
+    ]);
 
-    // Get avg rating and feedback count
-    const { data: feedbackStats } = await supabase
-      .from('skill_feedback_logs')
-      .select('rating')
-      .eq('skill_id', skillId);
+    const authorName = (authorResult.data?.name as string | null) ?? null;
+    const templates = templatesResult.data;
 
-    const ratings = feedbackStats ?? [];
+    const ratings = feedbackStatsResult.data ?? [];
     const feedbackCount = ratings.length;
     const avgRating =
       feedbackCount > 0
@@ -97,54 +97,77 @@ export class SupabaseSkillDetailRepository implements ISkillDetailRepository {
     };
   }
 
-  async getFeedbacksWithReplies(skillId: string): Promise<FeedbackWithReplies[]> {
+  async getFeedbacksWithReplies(
+    skillId: string,
+    limit: number = 20,
+    offset: number = 0,
+  ): Promise<PaginatedFeedbacks> {
     const supabase = await createClient();
 
-    const { data: feedbacks } = await supabase
-      .from('skill_feedback_logs')
-      .select('id, rating, comment, created_at, user_id')
-      .eq('skill_id', skillId)
-      .order('created_at', { ascending: false });
+    // Fetch paginated feedbacks and total count in parallel
+    const [feedbacksResult, countResult] = await Promise.all([
+      supabase
+        .from('skill_feedback_logs')
+        .select('id, rating, comment, created_at, user_id')
+        .eq('skill_id', skillId)
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1),
+      supabase
+        .from('skill_feedback_logs')
+        .select('*', { count: 'exact', head: true })
+        .eq('skill_id', skillId),
+    ]);
 
-    if (!feedbacks || feedbacks.length === 0) return [];
+    const feedbacks = feedbacksResult.data;
+    const totalCount = countResult.count ?? 0;
 
-    // Collect all user IDs (feedback authors)
+    if (!feedbacks || feedbacks.length === 0) {
+      return { feedbacks: [], totalCount, hasMore: false };
+    }
+
     const feedbackUserIds = feedbacks
       .map((f) => f.user_id as string)
       .filter(Boolean);
-
     const feedbackIds = feedbacks.map((f) => f.id as string);
 
-    // Get replies
-    const { data: replies } = await supabase
-      .from('feedback_replies')
-      .select('id, feedback_id, content, created_at, user_id')
-      .in('feedback_id', feedbackIds)
-      .order('created_at', { ascending: true });
+    // Parallelize: replies and feedback-author profiles
+    const [repliesResult, feedbackProfilesResult] = await Promise.all([
+      supabase
+        .from('feedback_replies')
+        .select('id, feedback_id, content, created_at, user_id')
+        .in('feedback_id', feedbackIds)
+        .order('created_at', { ascending: true }),
+      feedbackUserIds.length > 0
+        ? supabase.from('profiles').select('id, name').in('id', feedbackUserIds)
+        : Promise.resolve({ data: [] as { id: string; name: string | null }[] }),
+    ]);
 
-    // Collect reply user IDs
-    const replyUserIds = (replies ?? [])
-      .map((r) => r.user_id as string)
-      .filter(Boolean);
-
-    // Fetch all profiles in one query
-    const allUserIds = [...new Set([...feedbackUserIds, ...replyUserIds])];
     const profileMap = new Map<string, string | null>();
+    for (const p of feedbackProfilesResult.data ?? []) {
+      profileMap.set(p.id as string, (p.name as string | null) ?? null);
+    }
 
-    if (allUserIds.length > 0) {
-      const { data: profiles } = await supabase
+    // Collect reply user IDs and fetch missing profiles
+    const replies = repliesResult.data ?? [];
+    const replyUserIds = replies
+      .map((r) => r.user_id as string)
+      .filter((id) => id && !profileMap.has(id));
+
+    if (replyUserIds.length > 0) {
+      const uniqueReplyUserIds = [...new Set(replyUserIds)];
+      const { data: replyProfiles } = await supabase
         .from('profiles')
         .select('id, name')
-        .in('id', allUserIds);
+        .in('id', uniqueReplyUserIds);
 
-      for (const p of profiles ?? []) {
+      for (const p of replyProfiles ?? []) {
         profileMap.set(p.id as string, (p.name as string | null) ?? null);
       }
     }
 
     // Build replies map
     const repliesByFeedbackId = new Map<string, FeedbackReply[]>();
-    for (const reply of replies ?? []) {
+    for (const reply of replies) {
       const feedbackId = reply.feedback_id as string;
       const existing = repliesByFeedbackId.get(feedbackId) ?? [];
       existing.push({
@@ -156,7 +179,7 @@ export class SupabaseSkillDetailRepository implements ISkillDetailRepository {
       repliesByFeedbackId.set(feedbackId, existing);
     }
 
-    return feedbacks.map((f) => ({
+    const mappedFeedbacks: FeedbackWithReplies[] = feedbacks.map((f) => ({
       id: f.id as string,
       rating: f.rating as number,
       comment: (f.comment as string | null) ?? null,
@@ -164,6 +187,12 @@ export class SupabaseSkillDetailRepository implements ISkillDetailRepository {
       createdAt: f.created_at as string,
       replies: repliesByFeedbackId.get(f.id as string) ?? [],
     }));
+
+    return {
+      feedbacks: mappedFeedbacks,
+      totalCount,
+      hasMore: offset + limit < totalCount,
+    };
   }
 
   async submitFeedback(userId: string, input: SubmitFeedbackInput): Promise<FeedbackWithReplies> {

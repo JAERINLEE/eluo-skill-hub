@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, type ReactNode } from 'react';
+import { useMemo, type ReactNode, type ComponentProps } from 'react';
 import Markdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
@@ -89,10 +89,25 @@ interface NotionStyleMarkdownProps {
   content: string;
 }
 
+type RehypePlugin = ComponentProps<typeof Markdown>['rehypePlugins'];
+
 export default function NotionStyleMarkdown({ content }: NotionStyleMarkdownProps) {
   const { metadata, content: markdownBody } = useMemo(
     () => parseFrontmatter(content),
     [content],
+  );
+
+  const hasCodeBlock = useMemo(
+    () => /```[\s\S]*?```/.test(markdownBody),
+    [markdownBody],
+  );
+
+  const rehypePlugins: RehypePlugin = useMemo(
+    () =>
+      hasCodeBlock
+        ? [[rehypeSanitize, sanitizeSchema], rehypeHighlight]
+        : [[rehypeSanitize, sanitizeSchema]],
+    [hasCodeBlock],
   );
 
   if (!content || !content.trim()) return null;
@@ -105,10 +120,7 @@ export default function NotionStyleMarkdown({ content }: NotionStyleMarkdownProp
       <article className="prose max-w-none">
         <Markdown
           remarkPlugins={[remarkGfm]}
-          rehypePlugins={[
-            [rehypeSanitize, sanitizeSchema],
-            rehypeHighlight,
-          ]}
+          rehypePlugins={rehypePlugins}
           components={components}
         >
           {markdownBody}
