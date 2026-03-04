@@ -53,6 +53,7 @@
 - N/A (순수 프론트엔드 변경, DB 스키마 변경 없음) (017-markdown-render-custom)
 - TypeScript 5 (strict mode, `any` 금지) + Next.js 16.1.6 (App Router), React 19.2.3, @supabase/ssr ^0.8.0, @supabase/supabase-js ^2.98.0, react-markdown ^10.1.0, remark-gfm ^4.0.1, rehype-highlight ^7.0.2, rehype-sanitize ^6.0.0, gray-matter ^4.0.3 (018-skill-popup-optimization)
 - Supabase (PostgreSQL) — skills, categories, profiles, skill_templates, skill_feedback_logs, feedback_replies (018-skill-popup-optimization)
+- Supabase (PostgreSQL) + Supabase Storage (skill-descriptions, skill-templates 버킷) (020-admin-page-optimization)
 
 ## Recent Changes
 - 003-landing-page-redesign: Added TypeScript (strict) — `any` 금지 (헌법 원칙 I) + Next.js (App Router), Tailwind CSS v4, Shadcn UI, `next/font/local`

@@ -88,7 +88,7 @@ export async function createSkill(formData: FormData): Promise<CreateSkillResult
   const repository = new SupabaseAdminRepository();
   const useCase = new CreateSkillUseCase(repository);
 
-  return useCase.execute({
+  const result = await useCase.execute({
     icon,
     categoryId,
     title,
@@ -97,6 +97,13 @@ export async function createSkill(formData: FormData): Promise<CreateSkillResult
     markdownFile,
     templateFiles: templateFiles.length > 0 ? templateFiles : undefined,
   });
+
+  if (result.success) {
+    revalidatePath('/admin/skills');
+    revalidatePath('/admin');
+  }
+
+  return result;
 }
 
 export async function getSkillById(id: string): Promise<GetSkillResult> {
@@ -187,7 +194,7 @@ export async function updateSkill(formData: FormData): Promise<UpdateSkillResult
   const repository = new SupabaseAdminRepository();
   const useCase = new UpdateSkillUseCase(repository);
 
-  return useCase.execute({
+  const result = await useCase.execute({
     skillId,
     icon,
     categoryId,
@@ -199,6 +206,13 @@ export async function updateSkill(formData: FormData): Promise<UpdateSkillResult
     templateFiles: templateFiles.length > 0 ? templateFiles : undefined,
     removedTemplateIds,
   });
+
+  if (result.success) {
+    revalidatePath('/admin/skills');
+    revalidatePath('/admin');
+  }
+
+  return result;
 }
 
 export async function deleteSkill(skillId: string): Promise<DeleteSkillResult> {
@@ -218,6 +232,7 @@ export async function deleteSkill(skillId: string): Promise<DeleteSkillResult> {
 
     if (result.success) {
       revalidatePath('/admin/skills');
+      revalidatePath('/admin');
     }
 
     return result;

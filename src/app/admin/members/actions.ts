@@ -1,6 +1,7 @@
 'use server';
 
 import { createClient } from '@/shared/infrastructure/supabase/server';
+import { revalidatePath } from 'next/cache';
 import { SupabaseAdminRepository } from '@/admin/infrastructure/supabase-admin-repository';
 import { UpdateMemberRoleUseCase } from '@/admin/application/update-member-role-use-case';
 
@@ -45,6 +46,8 @@ export async function updateMemberRole(
     const repository = new SupabaseAdminRepository();
     const useCase = new UpdateMemberRoleUseCase(repository);
     await useCase.execute({ currentUserId: user.id, memberId, roleId });
+    revalidatePath('/admin/members');
+    revalidatePath('/admin');
     return { success: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : '역할 변경에 실패했습니다';

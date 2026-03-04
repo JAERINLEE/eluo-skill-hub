@@ -519,21 +519,20 @@ export class SupabaseAdminRepository implements AdminRepository {
       }
     }
 
-    // 삭제 대상 템플릿 파일 처리
+    // 삭제 대상 템플릿 파일 병렬 처리
     if (input.removedTemplateIds.length > 0) {
-      // 삭제 대상 파일 경로 조회
       const { data: toRemove } = await supabase
         .from('skill_templates')
         .select('id, file_path')
         .in('id', input.removedTemplateIds);
 
-      for (const tmpl of toRemove ?? []) {
-        try {
-          await deleteFile('skill-templates', tmpl.file_path as string);
-        } catch {
-          // 기존 파일 삭제 실패는 무시 (이미 없을 수 있음)
-        }
-      }
+      await Promise.all(
+        (toRemove ?? []).map((tmpl) =>
+          deleteFile('skill-templates', tmpl.file_path as string).catch(() => {
+            // 기존 파일 삭제 실패는 무시 (이미 없을 수 있음)
+          }),
+        ),
+      );
 
       await supabase
         .from('skill_templates')
@@ -541,24 +540,26 @@ export class SupabaseAdminRepository implements AdminRepository {
         .in('id', input.removedTemplateIds);
     }
 
-    // 신규 템플릿 파일 업로드
+    // 신규 템플릿 파일 병렬 업로드
     if (input.templateFiles && input.templateFiles.length > 0) {
-      for (const file of input.templateFiles) {
-        const filePath = `${input.skillId}/${file.name}`;
-        const fileType = file.name.endsWith('.zip') ? '.zip' : '.md';
-        try {
-          await uploadFile('skill-templates', filePath, file);
-          await supabase.from('skill_templates').insert({
-            skill_id: input.skillId,
-            file_name: file.name,
-            file_path: filePath,
-            file_size: file.size,
-            file_type: fileType,
+      await Promise.all(
+        input.templateFiles.map((file) => {
+          const filePath = `${input.skillId}/${file.name}`;
+          const fileType = file.name.endsWith('.zip') ? '.zip' : '.md';
+          return (async () => {
+            await uploadFile('skill-templates', filePath, file);
+            await supabase.from('skill_templates').insert({
+              skill_id: input.skillId,
+              file_name: file.name,
+              file_path: filePath,
+              file_size: file.size,
+              file_type: fileType,
+            });
+          })().catch((err) => {
+            fileErrors.push(`템플릿 파일(${file.name}) 업로드 실패: ${err instanceof Error ? err.message : String(err)}`);
           });
-        } catch (err) {
-          fileErrors.push(`템플릿 파일(${file.name}) 업로드 실패: ${err instanceof Error ? err.message : String(err)}`);
-        }
-      }
+        }),
+      );
     }
 
     if (fileErrors.length > 0) {
@@ -603,42 +604,50 @@ export class SupabaseAdminRepository implements AdminRepository {
 
     const skillId = skill.id as string;
 
-    // 마크다운 파일 업로드
+    // 마크다운 + 템플릿 파일 병렬 업로드
     const fileErrors: string[] = [];
+    const uploadTasks: Promise<void>[] = [];
+
     if (input.markdownFile) {
-      const mdPath = `${skillId}/${input.markdownFile.name}`;
-      try {
-        await uploadFile('skill-descriptions', mdPath, input.markdownFile);
-        const arrayBuffer = await input.markdownFile.arrayBuffer();
-        const content = new TextDecoder().decode(arrayBuffer);
-        await supabase
-          .from('skills')
-          .update({ markdown_file_path: mdPath, markdown_content: content })
-          .eq('id', skillId);
-      } catch (err) {
-        fileErrors.push(`마크다운 파일 업로드 실패: ${err instanceof Error ? err.message : String(err)}`);
-      }
+      const mdFile = input.markdownFile;
+      const mdPath = `${skillId}/${mdFile.name}`;
+      uploadTasks.push(
+        (async () => {
+          await uploadFile('skill-descriptions', mdPath, mdFile);
+          const arrayBuffer = await mdFile.arrayBuffer();
+          const content = new TextDecoder().decode(arrayBuffer);
+          await supabase
+            .from('skills')
+            .update({ markdown_file_path: mdPath, markdown_content: content })
+            .eq('id', skillId);
+        })().catch((err) => {
+          fileErrors.push(`마크다운 파일 업로드 실패: ${err instanceof Error ? err.message : String(err)}`);
+        }),
+      );
     }
 
-    // 템플릿 파일 업로드
     if (input.templateFiles && input.templateFiles.length > 0) {
       for (const file of input.templateFiles) {
         const filePath = `${skillId}/${file.name}`;
         const fileType = file.name.endsWith('.zip') ? '.zip' : '.md';
-        try {
-          await uploadFile('skill-templates', filePath, file);
-          await supabase.from('skill_templates').insert({
-            skill_id: skillId,
-            file_name: file.name,
-            file_path: filePath,
-            file_size: file.size,
-            file_type: fileType,
-          });
-        } catch (err) {
-          fileErrors.push(`템플릿 파일(${file.name}) 업로드 실패: ${err instanceof Error ? err.message : String(err)}`);
-        }
+        uploadTasks.push(
+          (async () => {
+            await uploadFile('skill-templates', filePath, file);
+            await supabase.from('skill_templates').insert({
+              skill_id: skillId,
+              file_name: file.name,
+              file_path: filePath,
+              file_size: file.size,
+              file_type: fileType,
+            });
+          })().catch((err) => {
+            fileErrors.push(`템플릿 파일(${file.name}) 업로드 실패: ${err instanceof Error ? err.message : String(err)}`);
+          }),
+        );
       }
     }
+
+    await Promise.all(uploadTasks);
 
     if (fileErrors.length > 0) {
       return { success: false, error: `스킬은 생성되었으나 파일 업로드에 실패했습니다: ${fileErrors.join(', ')}` };
@@ -662,40 +671,40 @@ export class SupabaseAdminRepository implements AdminRepository {
     }
 
     try {
-      // 1. 피드백 로그 삭제
-      await supabase
-        .from('skill_feedback_logs')
-        .delete()
-        .eq('skill_id', skillId);
-
-      // 2. 템플릿 파일 조회 → Storage 삭제 → DB 삭제
+      // 1. 템플릿 파일 경로 조회 (병렬 삭제를 위해 먼저 조회)
       const { data: templates } = await supabase
         .from('skill_templates')
         .select('id, file_path')
         .eq('skill_id', skillId);
 
+      // 2. 피드백 삭제 + Storage 파일 삭제를 병렬 실행
+      const markdownPath = skill.markdown_file_path as string | null;
+      const cleanupTasks: Promise<void>[] = [
+        // 피드백 로그 삭제
+        Promise.resolve(
+          supabase
+            .from('skill_feedback_logs')
+            .delete()
+            .eq('skill_id', skillId),
+        ).then(() => undefined),
+        // 마크다운 파일 Storage 삭제
+        ...(markdownPath
+          ? [deleteFile('skill-descriptions', markdownPath).catch(() => { /* 이미 없을 수 있음 */ })]
+          : []),
+        // 템플릿 파일 Storage 삭제
+        ...(templates ?? []).map((template) =>
+          deleteFile('skill-templates', template.file_path).catch(() => { /* 이미 없을 수 있음 */ }),
+        ),
+      ];
+
+      await Promise.all(cleanupTasks);
+
+      // 3. 템플릿 DB 레코드 삭제
       if (templates && templates.length > 0) {
-        for (const template of templates) {
-          try {
-            await deleteFile('skill-templates', template.file_path);
-          } catch {
-            // Storage 파일 삭제 실패 시에도 DB 삭제 계속 진행
-          }
-        }
         await supabase
           .from('skill_templates')
           .delete()
           .eq('skill_id', skillId);
-      }
-
-      // 3. 마크다운 파일 Storage 삭제
-      const markdownPath = skill.markdown_file_path as string | null;
-      if (markdownPath) {
-        try {
-          await deleteFile('skill-descriptions', markdownPath);
-        } catch {
-          // Storage 파일 삭제 실패 시에도 DB 삭제 계속 진행
-        }
       }
 
       // 4. 스킬 레코드 삭제

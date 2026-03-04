@@ -1,7 +1,7 @@
 'use client';
 
 import { Lightbulb, BookOpen } from 'lucide-react';
-import NotionStyleMarkdown from '@/features/skill-detail/NotionStyleMarkdown';
+import NotionStyleMarkdown from '@/shared/components/NotionStyleMarkdown';
 
 interface SkillDetailGuideProps {
   markdownContent: string | null;

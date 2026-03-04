@@ -1,6 +1,6 @@
 /* =============================================================================
    Notion Style Markdown — Scoped to .notion-markdown
-   Skill detail popup only. Does NOT affect admin MarkdownPreview.
+   Shared component used by skill detail popup and admin markdown preview.
    ============================================================================= */
 
 .notion-markdown {
