@@ -43,14 +43,18 @@ export default function SkillsCardGrid({ result, currentStatus, currentCategoryI
         </div>
         <SkillStatusFilterTabs currentStatus={currentStatus} />
       </div>
+      <div className="flex justify-between items-center mb-6">
+        {/* Category filter */}
+        <div className="">
+          <SkillCategoryFilter categories={categories} currentCategoryId={currentCategoryId} />
+        </div>
+        {/* Search input */}
+        <div className="">{searchInput}</div>
 
-      {/* Search input */}
-      <div className="mb-4">{searchInput}</div>
 
-      {/* Category filter */}
-      <div className="mb-6">
-        <SkillCategoryFilter categories={categories} currentCategoryId={currentCategoryId} />
       </div>
+
+
 
       {/* Card grid */}
       {data.length === 0 ? (
