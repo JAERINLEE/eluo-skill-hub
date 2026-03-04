@@ -3,15 +3,14 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { Input } from '@/shared/ui/input';
 import { Textarea } from '@/shared/ui/textarea';
 import { Switch } from '@/shared/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select';
-import { Label } from '@/shared/ui/label';
 import { Button } from '@/shared/ui/button';
 import type { CategoryOption, CreateSkillInput } from '@/admin/domain/types';
 import { createSkill, getCategories } from '@/app/admin/skills/actions';
 import TemplateFileUpload from './TemplateFileUpload';
+import MarkdownFileUpload from './MarkdownFileUpload';
 
 interface SkillAddFormProps {
   categories?: CategoryOption[];
@@ -164,22 +163,29 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      {/* 이모지 아이콘 */}
-      <div className="space-y-1.5">
-        <Label>아이콘 (이모지)</Label>
-        <div className="flex items-center gap-3">
-          <div className="relative" ref={emojiPickerRef}>
+    <form onSubmit={handleSubmit} className="flex flex-col md:flex-row max-h-[92vh]">
+      {/* 좌측 패널 — 아이콘 + 제목 + 상세 설명 */}
+      <div className="flex-1 overflow-y-auto p-10 md:p-14 scrollbar-hide">
+        {/* 아이콘 + 제목 */}
+        <div className="mb-10 flex items-start gap-8">
+          <div className="relative flex-shrink-0" ref={emojiPickerRef}>
             <button
               type="button"
-              className="w-14 h-14 rounded-xl border-2 border-dashed border-slate-200 hover:border-[#000080] flex items-center justify-center text-3xl transition-colors"
+              className="group size-28 bg-[#F0F0F0] rounded-3xl flex flex-col items-center justify-center border-2 border-dashed border-slate-300 hover:border-[#00007F] hover:bg-white transition-all overflow-hidden"
               onClick={() => setShowEmojiPicker((v) => !v)}
               title="이모지 선택"
             >
-              {form.icon || '⚡'}
+              {form.icon ? (
+                <span className="text-5xl">{form.icon}</span>
+              ) : (
+                <>
+                  <span className="text-4xl text-slate-400 group-hover:text-[#00007F]">+</span>
+                  <span className="text-[12px] font-bold text-slate-400 mt-2 group-hover:text-[#00007F]">아이콘 선택</span>
+                </>
+              )}
             </button>
             {showEmojiPicker && (
-              <div className="absolute left-0 top-16 z-50 bg-white border border-slate-200 rounded-xl shadow-xl p-3 w-64">
+              <div className="absolute left-0 top-36 z-50 bg-white border border-slate-200 rounded-xl shadow-xl p-3 w-64">
                 {EMOJI_GROUPS.map((group) => (
                   <div key={group.label} className="mb-2">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">{group.label}</p>
@@ -203,148 +209,132 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
               </div>
             )}
           </div>
-        </div>
-      </div>
-
-      {/* 카테고리 */}
-      <div className="space-y-1.5">
-        <Label htmlFor="categoryId">카테고리 *</Label>
-        <Select value={form.categoryId} onValueChange={(v) => updateField('categoryId', v)} disabled={categoriesLoading}>
-          <SelectTrigger id="categoryId" className={fieldErrors.categoryId ? 'border-red-400' : ''}>
-            <SelectValue placeholder={categoriesLoading ? '로딩 중...' : '카테고리 선택'} />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map((cat) => (
-              <SelectItem key={cat.id} value={cat.id}>
-                {cat.icon} {cat.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {fieldErrors.categoryId && (
-          <p className="text-xs text-red-500">{fieldErrors.categoryId}</p>
-        )}
-      </div>
-
-      {/* 제목 */}
-      <div className="space-y-1.5">
-        <Label htmlFor="title">제목 * <span className="text-slate-400 font-normal">({form.title.length}/100)</span></Label>
-        <Input
-          id="title"
-          value={form.title}
-          onChange={(e) => updateField('title', e.target.value)}
-          placeholder="스킬 제목을 입력해주세요"
-          maxLength={100}
-          className={fieldErrors.title ? 'border-red-400' : ''}
-        />
-        {fieldErrors.title && (
-          <p className="text-xs text-red-500">{fieldErrors.title}</p>
-        )}
-      </div>
-
-      {/* 설명 */}
-      <div className="space-y-1.5">
-        <Label htmlFor="description">설명 * <span className="text-slate-400 font-normal">({form.description.length}/500)</span></Label>
-        <Textarea
-          id="description"
-          value={form.description}
-          onChange={(e) => updateField('description', e.target.value)}
-          placeholder="스킬에 대한 간단한 설명을 입력해주세요"
-          maxLength={500}
-          rows={3}
-          className={fieldErrors.description ? 'border-red-400' : ''}
-        />
-        {fieldErrors.description && (
-          <p className="text-xs text-red-500">{fieldErrors.description}</p>
-        )}
-      </div>
-
-      {/* 설명 마크다운 파일 */}
-      <div className="space-y-1.5">
-        <Label>설명 마크다운 파일 (.md, 최대 1MB)</Label>
-        <div className="flex items-center gap-3">
-          <label className="cursor-pointer">
-            <span className="px-4 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:border-slate-400 transition-colors">
-              파일 선택
-            </span>
+          <div className="flex-1 pt-2">
+            <label className="block text-[12px] font-extrabold uppercase tracking-wider text-slate-400 mb-3 ml-1">제목</label>
             <input
-              type="file"
-              accept=".md"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                handleMarkdownFileChange(file);
-                if (file && !file.name.endsWith('.md')) {
-                  setFieldErrors((prev) => ({ ...prev, markdownFile: '.md 파일만 업로드 가능합니다' }));
-                } else if (file && file.size > 1048576) {
-                  setFieldErrors((prev) => ({ ...prev, markdownFile: '파일 크기는 1MB 이하여야 합니다' }));
-                } else {
-                  setFieldErrors((prev) => ({ ...prev, markdownFile: undefined }));
-                }
-              }}
+              id="title"
+              value={form.title}
+              onChange={(e) => updateField('title', e.target.value)}
+              placeholder="스킬 명칭을 입력하세요"
+              maxLength={100}
+              className={`w-full text-2xl font-bold bg-transparent border-b-2 border-slate-100 focus:border-[#00007F] focus:ring-0 focus:outline-none placeholder:text-slate-300 transition-all pb-2 px-1 ${fieldErrors.title ? 'border-red-400' : ''}`}
             />
-          </label>
-          {markdownFile && (
-            <div className="flex items-center gap-2 text-sm text-slate-600">
-              <span>{markdownFile.name}</span>
-              <button
-                type="button"
-                className="text-slate-400 hover:text-red-500"
-                onClick={() => handleMarkdownFileChange(undefined)}
-              >
-                ×
-              </button>
-            </div>
-          )}
+            {fieldErrors.title && (
+              <p className="text-xs text-red-500 mt-1">{fieldErrors.title}</p>
+            )}
+          </div>
         </div>
-        {fieldErrors.markdownFile && (
-          <p className="text-xs text-red-500">{fieldErrors.markdownFile}</p>
-        )}
+
+        {/* 설명 */}
+        <div className="space-y-10">
+          <section>
+            <label className="block text-[12px] font-extrabold uppercase tracking-wider text-slate-400 mb-3">
+              설명 <span className="normal-case tracking-normal font-normal">({form.description.length}/500)</span>
+            </label>
+            <Textarea
+              id="description"
+              value={form.description}
+              onChange={(e) => updateField('description', e.target.value)}
+              placeholder="스킬에 대한 간단한 설명을 입력해주세요"
+              draggable={false}
+              maxLength={500}
+              rows={3}
+              className={fieldErrors.description ? 'border-red-400' : ''}
+            />
+            {fieldErrors.description && (
+              <p className="text-xs text-red-500 mt-1">{fieldErrors.description}</p>
+            )}
+          </section>
+
+          <section>
+            <label className="flex items-center gap-2 text-sm font-bold text-[#1a1a1a] mb-4">
+              상세 설명
+            </label>
+            <MarkdownFileUpload
+              file={markdownFile}
+              onFileChange={handleMarkdownFileChange}
+            />
+          </section>
+        </div>
       </div>
 
-      {/* 템플릿 파일 업로드 */}
-      <div className="space-y-1.5">
-        <Label>템플릿 파일 (.zip / .md, 각 100KB 이하, 최대 10개)</Label>
-        <TemplateFileUpload
-          files={templateFiles}
-          onChange={handleTemplateFilesChange}
-          error={fieldErrors.templateFiles}
-        />
-      </div>
+      {/* 우측 사이드바 */}
+      <div className="w-full md:w-96 bg-[#F0F0F0]/50 border-t md:border-t-0 md:border-l border-slate-200/50 p-10 flex flex-col gap-8 backdrop-blur-md">
+        {/* 카테고리 */}
+        <section>
+          <label className="block text-[12px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-5">카테고리</label>
+          <Select value={form.categoryId} onValueChange={(v) => updateField('categoryId', v)} disabled={categoriesLoading}>
+            <SelectTrigger id="categoryId" className={`w-full bg-white border border-slate-200 rounded-xl py-3.5 px-5 text-sm font-bold ${fieldErrors.categoryId ? 'border-red-400' : ''}`}>
+              <SelectValue placeholder={categoriesLoading ? '로딩 중...' : '카테고리 선택'} />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((cat) => (
+                <SelectItem key={cat.id} value={cat.id}>
+                  {cat.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {fieldErrors.categoryId && (
+            <p className="text-xs text-red-500 mt-1">{fieldErrors.categoryId}</p>
+          )}
+        </section>
 
-      {/* 공개 여부 */}
-      <div className="flex items-center justify-between py-3 border-t border-slate-100">
-        <div>
-          <p className="text-sm font-medium text-slate-900">공개 여부</p>
-          <p className="text-xs text-slate-400 mt-0.5">
-            {form.isPublished ? '즉시 공개됩니다' : '초안으로 저장됩니다'}
+        {/* 템플릿 파일 업로드 */}
+        <section>
+          <label className="block text-[12px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-5">템플릿 파일 업로드</label>
+          <TemplateFileUpload
+            files={templateFiles}
+            onChange={handleTemplateFilesChange}
+            error={fieldErrors.templateFiles}
+          />
+        </section>
+
+        {/* 공개 여부 */}
+        <section>
+          <label className="block text-[12px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-5">공개 여부</label>
+          <div className="flex items-center justify-between bg-white rounded-xl p-4 border border-slate-100">
+            <div>
+              <p className="text-sm font-bold text-[#1a1a1a]">
+                {form.isPublished ? '즉시 공개됩니다' : '초안으로 저장됩니다'}
+              </p>
+            </div>
+            <Switch
+              checked={form.isPublished}
+              onCheckedChange={(v) => updateField('isPublished', v)}
+              aria-label="공개 여부"
+            />
+          </div>
+        </section>
+
+        {/* 버튼 */}
+        <div className="mt-auto pt-6 space-y-4">
+          <Button
+            type="submit"
+            className="w-full flex items-center justify-center gap-3 bg-[#00007F] hover:brightness-120 text-white font-bold p-6 rounded-2xl shadow-lg shadow-[#00007F]/20 active:scale-[0.98] transition-all"
+            disabled={isSubmitting}
+          >
+            <span className="text-base tracking-wide">{isSubmitting ? '저장 중...' : '스킬 저장하기'}</span>
+          </Button>
+          <button
+            type="button"
+            className="w-full py-4 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors"
+            onClick={handleDraftSaveRequest}
+            disabled={isSubmitting}
+          >
+            임시저장
+          </button>
+        </div>
+
+        {/* 보안 가이드 */}
+        <div className="p-6 bg-white/60 rounded-2xl border border-white shadow-sm">
+          <h5 className="text-[10px] font-extrabold text-[#00007F] uppercase tracking-wider mb-3 flex items-center gap-2">
+            보안 가이드
+          </h5>
+          <p className="text-[12px] text-slate-500 leading-relaxed">
+            등록된 모든 스킬은 사내 보안 가이드를 준수해야 하며, 위반 시 삭제될 수 있습니다.
           </p>
         </div>
-        <Switch
-          checked={form.isPublished}
-          onCheckedChange={(v) => updateField('isPublished', v)}
-          aria-label="공개 여부"
-        />
-      </div>
-
-      {/* 버튼 */}
-      <div className="flex gap-3 pt-2">
-        <Button
-          type="button"
-          variant="outline"
-          className="flex-1"
-          onClick={handleDraftSaveRequest}
-          disabled={isSubmitting}
-        >
-          임시저장
-        </Button>
-        <Button
-          type="submit"
-          className="flex-1 bg-[#000080] hover:bg-[#000070] text-white"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? '저장 중...' : '저장'}
-        </Button>
       </div>
     </form>
   );

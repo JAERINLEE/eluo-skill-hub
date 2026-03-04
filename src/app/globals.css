@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@plugin "@tailwindcss/typography";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -101,10 +103,12 @@
 }
 
 /* Hide scrollbar utility */
-.no-scrollbar::-webkit-scrollbar {
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-.no-scrollbar {
+.no-scrollbar,
+.scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

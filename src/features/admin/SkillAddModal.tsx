@@ -41,26 +41,21 @@ export default function SkillAddModal() {
 
   return (
     <>
-      {/* Overlay — 외부 클릭 무시 (FR-007) */}
-      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-          <div className="flex items-center justify-between p-6 border-b border-slate-100">
-            <h2 className="text-xl font-black text-slate-900">새 스킬 추가하기</h2>
-            <button
-              type="button"
-              onClick={handleCloseAttempt}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-              aria-label="닫기"
-            >
-              <X size={20} />
-            </button>
-          </div>
-          <div className="p-6">
-            <SkillAddForm
-              onDirtyChange={setIsDirty}
-              onRequestDraftSave={handleDraftSaveRequest}
-            />
-          </div>
+      {/* Overlay — glass-overlay backdrop */}
+      <div className="fixed inset-0 z-50 bg-[rgba(0,0,127,0.1)] backdrop-blur-[12px] flex items-center justify-center p-4">
+        <div className="bg-gradient-to-br from-white to-[#f9f9f9] border border-white/40 rounded-3xl w-full max-w-5xl max-h-[92vh] overflow-hidden relative" style={{ boxShadow: 'rgba(0, 0, 127, 0.04) 0px 0px 0px 1px, rgba(0, 0, 127, 0.08) 0px 10px 30px -5px' }}>
+          <button
+            type="button"
+            onClick={handleCloseAttempt}
+            className="absolute top-6 right-6 h-10 w-10 flex items-center justify-center rounded-full bg-white/80 hover:bg-white text-slate-500 hover:text-[#00007F] transition-all z-20 border border-slate-200/50 shadow-sm active:scale-95"
+            aria-label="닫기"
+          >
+            <X size={20} />
+          </button>
+          <SkillAddForm
+            onDirtyChange={setIsDirty}
+            onRequestDraftSave={handleDraftSaveRequest}
+          />
         </div>
       </div>
 
