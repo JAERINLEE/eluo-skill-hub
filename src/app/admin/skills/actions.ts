@@ -53,14 +53,14 @@ export async function createSkill(formData: FormData): Promise<CreateSkillResult
       fieldErrors.templateFiles = '.zip 또는 .md 파일만 업로드 가능합니다';
       break;
     }
-    if (entry.size > 102400) {
-      fieldErrors.templateFiles = '템플릿 파일 크기는 100KB 이하여야 합니다';
+    if (entry.size > 204800) {
+      fieldErrors.templateFiles = '템플릿 파일 크기는 200KB 이하여야 합니다';
       break;
     }
     templateFiles.push(entry);
   }
-  if (templateFiles.length > 10) {
-    fieldErrors.templateFiles = '템플릿 파일은 최대 10개까지 업로드 가능합니다';
+  if (templateFiles.length > 5) {
+    fieldErrors.templateFiles = '템플릿 파일은 최대 5개까지 업로드 가능합니다';
   }
 
   if (Object.keys(fieldErrors).length > 0) {
@@ -161,14 +161,14 @@ export async function updateSkill(formData: FormData): Promise<UpdateSkillResult
       fieldErrors.templateFiles = '.zip 또는 .md 파일만 업로드 가능합니다';
       break;
     }
-    if (entry.size > 102400) {
-      fieldErrors.templateFiles = '템플릿 파일 크기는 100KB 이하여야 합니다';
+    if (entry.size > 204800) {
+      fieldErrors.templateFiles = '템플릿 파일 크기는 200KB 이하여야 합니다';
       break;
     }
     templateFiles.push(entry);
   }
-  if (templateFiles.length > 10) {
-    fieldErrors.templateFiles = '템플릿 파일은 최대 10개까지 업로드 가능합니다';
+  if (templateFiles.length > 5) {
+    fieldErrors.templateFiles = '템플릿 파일은 최대 5개까지 업로드 가능합니다';
   }
 
   if (Object.keys(fieldErrors).length > 0) {

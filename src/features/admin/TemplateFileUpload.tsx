@@ -12,8 +12,8 @@ interface TemplateFileUploadProps {
   onExistingRemoved?: (ids: string[]) => void;
 }
 
-const MAX_COUNT = 10;
-const MAX_SIZE = 102400; // 100KB
+const MAX_COUNT = 5;
+const MAX_SIZE = 204800; // 200KB
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes}B`;
