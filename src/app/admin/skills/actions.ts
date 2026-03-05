@@ -53,8 +53,8 @@ export async function createSkill(formData: FormData): Promise<CreateSkillResult
       fieldErrors.templateFiles = '.zip 또는 .md 파일만 업로드 가능합니다';
       break;
     }
-    if (entry.size > 204800) {
-      fieldErrors.templateFiles = '템플릿 파일 크기는 200KB 이하여야 합니다';
+    if (entry.size > 512000) {
+      fieldErrors.templateFiles = '템플릿 파일 크기는 500KB 이하여야 합니다';
       break;
     }
     templateFiles.push(entry);
@@ -161,8 +161,8 @@ export async function updateSkill(formData: FormData): Promise<UpdateSkillResult
       fieldErrors.templateFiles = '.zip 또는 .md 파일만 업로드 가능합니다';
       break;
     }
-    if (entry.size > 204800) {
-      fieldErrors.templateFiles = '템플릿 파일 크기는 200KB 이하여야 합니다';
+    if (entry.size > 512000) {
+      fieldErrors.templateFiles = '템플릿 파일 크기는 500KB 이하여야 합니다';
       break;
     }
     templateFiles.push(entry);

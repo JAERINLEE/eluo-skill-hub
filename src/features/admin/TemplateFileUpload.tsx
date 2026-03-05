@@ -13,7 +13,7 @@ interface TemplateFileUploadProps {
 }
 
 const MAX_COUNT = 5;
-const MAX_SIZE = 204800; // 200KB
+const MAX_SIZE = 512000; // 500KB
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes}B`;
