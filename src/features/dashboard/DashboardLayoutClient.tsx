@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import type { UserProfile, CategoryItem, SidebarTab } from '@/dashboard/domain/types';
 import DashboardSidebar from './DashboardSidebar';
 import DashboardHeader from './DashboardHeader';
-import PageViewTracker from '@/event-log/hooks/PageViewTracker';
 
 const IsViewerContext = createContext<boolean>(false);
 const IsAdminContext = createContext<boolean>(false);
@@ -115,7 +114,6 @@ export default function DashboardLayoutClient({
       <IsAdminContext.Provider value={isAdmin}>
         <UserIdContext.Provider value={userId}>
           <DashboardFilterContext.Provider value={{ filter, setActiveTab, setSearchQuery, setLimit }}>
-            <PageViewTracker />
             <div className="flex h-screen overflow-hidden">
               <DashboardSidebar
                 categories={categories}
