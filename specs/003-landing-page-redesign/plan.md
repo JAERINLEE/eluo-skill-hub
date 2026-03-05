@@ -124,12 +124,12 @@ const InteractiveGlobe = dynamic(
 )
 
 // 히어로 섹션 2단 레이아웃
-<section className="bg-brand-navy text-white py-12 px-6">
+<section className="bg-[#00007F] text-white py-12 px-6">
   <div className="max-w-5xl mx-auto flex flex-col md:flex-row min-h-[500px]">
     {/* 좌측: 텍스트 + CTA */}
     <div className="flex-1 flex flex-col justify-center gap-6 md:pr-8">
       <h1 className="text-4xl font-bold tracking-tight font-eluo">
-        <span className="text-brand-yellow">ELUO</span> AI SKILL HUB
+        <span className="text-[#FEFE01]">ELUO</span> AI SKILL HUB
       </h1>
       ...
     </div>

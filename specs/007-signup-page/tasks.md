@@ -45,13 +45,13 @@
 - [x] T005 [P] [US1] Update `signUp()` in `src/auth/infrastructure/supabase-auth-repository.ts` to pass `credentials.name` as `options.data.display_name` to Supabase `auth.signUp()`, implement `identities`-based duplicate email detection returning `success: "pending"` (미인증) or `success: false, error: "이미 가입된 이메일입니다"` (인증완료)
 - [x] T006 [P] [US1] Update `SignupUseCase.execute()` in `src/auth/application/signup-use-case.ts` to pass `name` from credentials to repository `signUp()` call
 - [x] T007 [US1] Update `signup()` server action in `src/app/signup/actions.ts` to extract and validate `name` from FormData, pass to `SignupUseCase.execute()`
-- [x] T008 [US1] Redesign `src/features/auth/SignupForm.tsx`: apply `glass-card` class with `max-w-[480px] rounded-3xl shadow-2xl p-8 md:p-10`, add card header (brand-yellow icon box, "회원가입" title, subtitle), add `name` input field, add `confirmPassword` field with `grid grid-cols-1 md:grid-cols-2 gap-4` layout, add client-side `password !== confirmPassword` validation, style submit button with `h-14 bg-brand-navy` classes
+- [x] T008 [US1] Redesign `src/features/auth/SignupForm.tsx`: apply `glass-card` class with `max-w-[480px] rounded-3xl shadow-2xl p-8 md:p-10`, add card header (brand-yellow icon box, "회원가입" title, subtitle), add `name` input field, add `confirmPassword` field with `grid grid-cols-1 md:grid-cols-2 gap-4` layout, add client-side `password !== confirmPassword` validation, style submit button with `h-14 bg-[#00007F]` classes
 
 ### 이번 이터레이션 — 중복 이메일 분기 처리
 
 - [x] T009 [US1] Add `"duplicate"` literal to `SignupActionState.step` union type in `src/auth/domain/types.ts`: change `step: "form" | "verify"` to `step: "form" | "verify" | "duplicate"` (data-model.md, R-007)
 - [x] T010 [US1] Update `signup()` server action in `src/app/signup/actions.ts`: add `if (result.error === "이미 가입된 이메일입니다")` branch that returns `{ error: result.error, step: "duplicate", email: "" }` before the existing generic error return (plan.md 변경 2)
-- [x] T011 [US1] Add duplicate email card view to `src/features/auth/SignupForm.tsx`: add `if (state.step === "duplicate")` branch (early return) rendering a glass-card with 👤 icon, "이미 가입된 이메일입니다" title, "입력하신 이메일은 이미 가입된 계정입니다. 로그인 페이지에서 로그인해 주세요." message, `<Link href="/signin">` "로그인으로 이동" button with `bg-brand-navy` style, and "다른 이메일로 가입하기" link that resets form via `key` prop increment (R-008, R-009)
+- [x] T011 [US1] Add duplicate email card view to `src/features/auth/SignupForm.tsx`: add `if (state.step === "duplicate")` branch (early return) rendering a glass-card with 👤 icon, "이미 가입된 이메일입니다" title, "입력하신 이메일은 이미 가입된 계정입니다. 로그인 페이지에서 로그인해 주세요." message, `<Link href="/signin">` "로그인으로 이동" button with `bg-[#00007F]` style, and "다른 이메일로 가입하기" link that resets form via `key` prop increment (R-008, R-009)
 - [x] T012 [US1] Remove `isDuplicateEmailError` inline error display logic from `src/features/auth/SignupForm.tsx` — replaced by the separate card view added in T011 (plan.md 변경 4)
 
 **Checkpoint**: 인증 완료 중복 이메일 → "이미 가입된 이메일" 카드 표시. 미인증 중복 이메일 → 기존 OTP 카드 표시. 신규 이메일 → OTP 카드 표시.
@@ -81,7 +81,7 @@
 
 ### Implementation for User Story 3 (이전 이터레이션 완료)
 
-- [x] T015 [US3] Style login navigation link in `src/features/auth/SignupForm.tsx`: `mt-5 pt-8 border-t border-white/40 text-center` divider, "이미 계정이 있으신가요?" text with `text-sm text-slate-600`, "로그인" link with `text-slate-800 font-bold hover:text-brand-navy underline` navigating to `/signin` via `<Link>` (FR-009)
+- [x] T015 [US3] Style login navigation link in `src/features/auth/SignupForm.tsx`: `mt-5 pt-8 border-t border-white/40 text-center` divider, "이미 계정이 있으신가요?" text with `text-sm text-slate-600`, "로그인" link with `text-slate-800 font-bold hover:text-[#00007F] underline` navigating to `/signin` via `<Link>` (FR-009)
 
 **Checkpoint**: 폼 하단 네비게이션 링크가 `/signin`으로 정상 이동한다.
 

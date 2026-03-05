@@ -9,15 +9,15 @@
 **Rationale**:
 Tailwind CSS v4는 `tailwind.config.js` 없이 CSS 파일 내 `@theme` 디렉티브로
 모든 디자인 토큰을 관리한다. `--color-brand-*` 네이밍 컨벤션으로 정의하면
-Tailwind가 자동으로 `bg-brand-yellow`, `text-brand-navy`, `border-brand-light`
+Tailwind가 자동으로 `bg-[#FEFE01]`, `text-[#00007F]`, `border-brand-light`
 등의 유틸리티 클래스를 생성한다.
 
 **Token Naming**:
 
 | 토큰 이름 | CSS Custom Property | 헥스 값 | 생성되는 Tailwind 클래스 예시 |
 |---------|-------------------|--------|--------------------------|
-| brand-yellow | `--color-brand-yellow` | `#FEFE01` | `bg-brand-yellow`, `text-brand-yellow` |
-| brand-navy | `--color-brand-navy` | `#00007F` | `bg-brand-navy`, `text-brand-navy` |
+| brand-yellow | `--color-brand-yellow` | `#FEFE01` | `bg-[#FEFE01]`, `text-[#FEFE01]` |
+| brand-navy | `--color-brand-navy` | `#00007F` | `bg-[#00007F]`, `text-[#00007F]` |
 | brand-light | `--color-brand-light` | `#F0F0F0` | `bg-brand-light`, `text-brand-light` |
 
 **Alternatives Considered**:
@@ -148,4 +148,4 @@ const eslintConfig = defineConfig([
 | 폰트 등록 방식 | `next/font/local` + CSS variable `--font-pretendard` |
 | ESLint 강제 방식 | `rules` 블록에 `no-explicit-any: error` 추가 |
 | TypeScript strict | 이미 적용됨, 변경 없음 |
-| LandingPage 브랜드 컬러 | `bg-brand-yellow/navy/light` 클래스 사용 |
+| LandingPage 브랜드 컬러 | `bg-[#FEFE01]/navy/light` 클래스 사용 |

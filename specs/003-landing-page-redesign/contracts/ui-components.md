@@ -78,7 +78,7 @@ export function LandingPage(): JSX.Element
 
 ```
 <main>
-  <section.hero>       // bg-brand-navy, text-white, 2단 레이아웃
+  <section.hero>       // bg-[#00007F], text-white, 2단 레이아웃
     <div.left>         // 텍스트 콘텐츠
       <h1.font-eluo>   // "ELUO AI SKILL HUB" — eluofacevf 폰트
       <p>              // 서비스 소개
@@ -89,7 +89,7 @@ export function LandingPage(): JSX.Element
     </div>
   </section>
   <section.features>   // bg-brand-light, 기능 카드 3열 그리드
-  <footer>             // bg-brand-navy
+  <footer>             // bg-[#00007F]
 </main>
 ```
 

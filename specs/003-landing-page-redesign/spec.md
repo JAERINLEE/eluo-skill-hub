@@ -86,7 +86,7 @@
 
 - 프로젝트에 `ELUOFACEVF.ttf` 파일이 이미 `src/app/font/` 경로에 존재하는 것으로 확인됨.
 - 지구본 컴포넌트는 외부 3D 라이브러리 없이 Canvas API만으로 구현됨 (별도 패키지 설치 불필요).
-- 히어로 섹션 배경색은 기존 `bg-brand-navy`를 유지하거나 데모 디자인의 `bg-card`를 참고하여 조정함.
+- 히어로 섹션 배경색은 기존 `bg-[#00007F]`를 유지하거나 데모 디자인의 `bg-card`를 참고하여 조정함.
 - 글로브 기본 색상(dotColor, arcColor, markerColor)은 브랜드 컬러에 맞게 조정 가능.
 
 ## Success Criteria *(mandatory)*

@@ -72,7 +72,7 @@ npm run dev
 ```bash
 # 임시 컴포넌트에서 토큰 클래스 사용 확인
 # src/app/page.tsx 또는 LandingPage에서 다음 클래스가 에러 없이 빌드되어야 함:
-# bg-brand-yellow, text-brand-navy, bg-brand-light
+# bg-[#FEFE01], text-[#00007F], bg-brand-light
 ```
 
 ---

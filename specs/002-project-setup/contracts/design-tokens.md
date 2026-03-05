@@ -26,11 +26,11 @@
 
 | 용도 | 클래스 패턴 | 예시 |
 |-----|-----------|-----|
-| 배경색 | `bg-brand-{token}` | `bg-brand-yellow`, `bg-brand-navy`, `bg-brand-light` |
-| 텍스트색 | `text-brand-{token}` | `text-brand-yellow`, `text-brand-navy`, `text-brand-light` |
+| 배경색 | `bg-brand-{token}` | `bg-[#FEFE01]`, `bg-[#00007F]`, `bg-brand-light` |
+| 텍스트색 | `text-brand-{token}` | `text-[#FEFE01]`, `text-[#00007F]`, `text-brand-light` |
 | 테두리색 | `border-brand-{token}` | `border-brand-yellow`, `border-brand-navy` |
 | 링 색상 | `ring-brand-{token}` | `ring-brand-navy` |
-| 투명도 조합 | `bg-brand-{token}/{opacity}` | `bg-brand-yellow/20`, `bg-brand-navy/10` |
+| 투명도 조합 | `bg-brand-{token}/{opacity}` | `bg-[#FEFE01]/20`, `bg-[#00007F]/10` |
 
 ### CSS Variable 직접 참조 (컴포넌트에서 제한적 허용)
 

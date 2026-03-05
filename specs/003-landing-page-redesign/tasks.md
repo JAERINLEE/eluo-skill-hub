@@ -86,7 +86,7 @@
 
 ### Implementation — User Story 3
 
-- [x] T016 [US3] Audit `LandingPage.tsx` after T013 changes: verify features section (`bg-brand-light`) grid and footer (`bg-brand-navy`) are intact, adjust padding/spacing if layout shift occurred in `src/features/root-page/LandingPage.tsx`
+- [x] T016 [US3] Audit `LandingPage.tsx` after T013 changes: verify features section (`bg-brand-light`) grid and footer (`bg-[#00007F]`) are intact, adjust padding/spacing if layout shift occurred in `src/features/root-page/LandingPage.tsx`
 
 ### Tests — User Story 3
 
