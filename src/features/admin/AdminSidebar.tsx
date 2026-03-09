@@ -31,7 +31,7 @@ export default function AdminSidebar({ userName, userRole }: AdminSidebarProps) 
     >
       <div className="p-6 flex-1">
         {/* Logo */}
-        <div className="flex items-center gap-2 mb-8">
+        <Link href="/admin" className="flex items-center gap-2 mb-8">
           <div className="size-8 bg-[#000080] rounded-lg flex items-center justify-center">
             <Zap strokeWidth={2.5} className="size-4 text-[#FEFE01] fill-[#FEFE01]" />
           </div>
@@ -41,7 +41,7 @@ export default function AdminSidebar({ userName, userRole }: AdminSidebarProps) 
               Admin
             </p>
           </div>
-        </div>
+        </Link>
 
         {/* Navigation */}
         <nav className="space-y-1">
