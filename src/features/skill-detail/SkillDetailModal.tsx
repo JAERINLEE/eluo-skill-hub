@@ -160,6 +160,12 @@ export default function SkillDetailModal({
               </h5>
               <div className="space-y-4 text-[13px] text-[#1a1a1a]">
                 <div className="flex justify-between items-center">
+                  <span className="text-slate-500">최초 등록일</span>
+                  <span className="font-bold">
+                    {skill ? formatDate(skill.createdAt) : '-'}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
                   <span className="text-slate-500">최근 업데이트</span>
                   <span className="font-bold">
                     {skill ? formatDate(skill.updatedAt) : '-'}
@@ -187,8 +193,11 @@ export default function SkillDetailModal({
 function SkillDetailSkeleton() {
   return (
     <div className="animate-pulse space-y-8">
-      <div className="w-20 h-20 bg-slate-200 rounded-2xl" />
       <div className="h-10 w-3/4 bg-slate-200 rounded" />
+      <div className="flex gap-2">
+        <div className="h-6 w-16 bg-slate-100 rounded-full" />
+        <div className="h-6 w-16 bg-slate-100 rounded-full" />
+      </div>
       <div className="h-4 w-1/2 bg-slate-100 rounded" />
       <div className="space-y-3 mt-12">
         <div className="h-4 bg-slate-100 rounded w-full" />

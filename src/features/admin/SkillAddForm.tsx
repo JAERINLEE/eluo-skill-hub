@@ -372,11 +372,11 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
         </section>
 
         {/* 버전 이력 (수정 모드) */}
-        {isEditMode && initialData?.versionHistory && (
+        {/* {isEditMode && initialData?.versionHistory && (
           <section>
             <VersionHistoryList history={initialData.versionHistory} />
           </section>
-        )}
+        )} */}
 
         {/* 버튼 */}
         <div className="mt-auto pt-6 space-y-4">

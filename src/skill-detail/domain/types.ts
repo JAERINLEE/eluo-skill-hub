@@ -9,6 +9,7 @@ export interface SkillDetailPopup {
   readonly tags: readonly string[];
   readonly markdownContent: string | null;
   readonly authorName: string | null;
+  readonly createdAt: string;
   readonly updatedAt: string;
   readonly templates: SkillTemplateInfo[];
   readonly downloadCount: number;

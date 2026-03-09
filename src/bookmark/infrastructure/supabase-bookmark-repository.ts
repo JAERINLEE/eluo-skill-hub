@@ -8,6 +8,7 @@ interface JoinedSkill {
   description: string | null;
   version: string;
   created_at: string;
+  updated_at: string;
   tags: string[] | null;
   categories: { name: string; icon: string } | { name: string; icon: string }[] | null;
 }
@@ -38,7 +39,7 @@ export class SupabaseBookmarkRepository implements BookmarkRepository {
     const { data } = await supabase
       .from('bookmarks')
       .select(
-        'skill_id, created_at, skills(id, title, description, version, created_at, tags, categories(name, icon))'
+        'skill_id, created_at, skills(id, title, description, version, created_at, updated_at, tags, categories(name, icon))'
       )
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
@@ -59,6 +60,7 @@ export class SupabaseBookmarkRepository implements BookmarkRepository {
           version: skill.version ?? '1.0.0',
           tags: skill.tags ?? [],
           createdAt: skill.created_at,
+          updatedAt: skill.updated_at,
         };
       });
   }

@@ -35,7 +35,7 @@ export class SupabaseDashboardRepository implements DashboardRepository {
 
     let query = supabase
       .from('skills')
-      .select('id, title, description, version, created_at, tags, categories(name, icon)', { count: 'exact' })
+      .select('id, title, description, version, created_at, updated_at, tags, categories(name, icon)', { count: 'exact' })
       .eq('status', 'published')
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -67,6 +67,7 @@ export class SupabaseDashboardRepository implements DashboardRepository {
       version: (row.version as string) ?? '1.0.0',
       tags: (row.tags as string[] | null) ?? [],
       createdAt: row.created_at as string,
+      updatedAt: row.updated_at as string,
     }));
 
     return {

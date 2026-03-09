@@ -47,7 +47,7 @@ export default function SkillCard({ skill }: SkillCardProps) {
       </div>
       <h3 className="text-lg font-bold text-slate-900 mb-1">{skill.title}</h3>
       <p className="text-sm text-slate-500 mb-4 line-clamp-2">{skill.description ?? ''}</p>
-      <div className="mb-6">
+      <div className="mb-6 ">
         <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
           <Blocks className='size-4' />
           <span>{skill.categoryName}</span>
@@ -57,10 +57,16 @@ export default function SkillCard({ skill }: SkillCardProps) {
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-400 font-medium mt-1">
           <Clock className='size-4' />
-          <span>{new Date(skill.updatedAt).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
+          <span>생성 {new Date(skill.createdAt).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
         </div>
+        {new Date(skill.createdAt).getTime() !== new Date(skill.updatedAt).getTime() && (
+          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium mt-1">
+            <Clock className='size-4' />
+            <span>수정 {new Date(skill.updatedAt).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
+          </div>
+        )}
         {skill.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-2">
+          <div className="flex flex-wrap gap-1.5 mt-3">
             {skill.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}

@@ -12,7 +12,7 @@ interface DashboardSkillCardProps {
 export default function DashboardSkillCard({ skill, isBookmarked, userId, onTagClick }: DashboardSkillCardProps) {
   return (
     <div
-      className="relative bg-[rgba(0,0,127,0.05)] p-8 rounded-3xl border border-white/40 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_20px_25px_-5px_rgba(0,0,127,0.1),0_10px_10px_-5px_rgba(0,0,127,0.04)] hover:bg-white cursor-pointer"
+      className="relative h-full flex flex-col bg-[rgba(0,0,127,0.05)] p-8 rounded-3xl border border-white/40 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_20px_25px_-5px_rgba(0,0,127,0.1),0_10px_10px_-5px_rgba(0,0,127,0.04)] hover:bg-white cursor-pointer"
     >
       <BookmarkButton skillId={skill.id} isBookmarked={isBookmarked ?? false} userId={userId} />
 
@@ -20,7 +20,7 @@ export default function DashboardSkillCard({ skill, isBookmarked, userId, onTagC
       <p className="text-sm text-slate-500 mb-6 leading-relaxed line-clamp-3">
         {skill.description ?? ''}
       </p>
-      <div className="flex flex-wrap gap-2 pt-4 border-t border-[#00007F]/5">
+      <div className="mt-auto flex flex-wrap gap-2 pt-4 border-t border-[#00007F]/5">
         <span className="flex items-center gap-1 px-3 py-1 bg-[#00007F]/5 text-[10px] font-bold uppercase rounded-full text-[#00007F]">
           <CategoryIcon icon={skill.categoryIcon} size={12} />
           {skill.categoryName}
@@ -43,6 +43,14 @@ export default function DashboardSkillCard({ skill, isBookmarked, userId, onTagC
           </button>
         ))}
       </div>
+      <p className="mt-3 text-xs text-slate-400">
+        {(() => {
+          const fmt = (d: string) => d.slice(0, 10).replace(/-/g, '');
+          const created = fmt(skill.createdAt);
+          const updated = fmt(skill.updatedAt);
+          return created === updated ? created : `${created} / ${updated}`;
+        })()}
+      </p>
     </div>
   );
 }

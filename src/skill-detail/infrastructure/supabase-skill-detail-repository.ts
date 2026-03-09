@@ -33,7 +33,7 @@ export class SupabaseSkillDetailRepository implements ISkillDetailRepository {
     const { data: skill, error } = await supabase
       .from('skills')
       .select(
-        'id, title, description, version, markdown_content, updated_at, author_id, download_count, tags, categories(name, icon)'
+        'id, title, description, version, markdown_content, created_at, updated_at, author_id, download_count, tags, categories(name, icon)'
       )
       .eq('id', skillId)
       .single();
@@ -85,6 +85,7 @@ export class SupabaseSkillDetailRepository implements ISkillDetailRepository {
       tags: (skill.tags as string[] | null) ?? [],
       markdownContent: (skill.markdown_content as string | null) ?? null,
       authorName,
+      createdAt: skill.created_at as string,
       updatedAt: skill.updated_at as string,
       templates: templateInfos,
       downloadCount: (skill.download_count as number) ?? 0,

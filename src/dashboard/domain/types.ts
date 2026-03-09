@@ -7,6 +7,7 @@ export interface DashboardSkillCard {
   readonly version: string;
   readonly tags: readonly string[];
   readonly createdAt: string;
+  readonly updatedAt: string;
 }
 
 export interface DashboardSkillsResult {
