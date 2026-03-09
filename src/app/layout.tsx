@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/shared/ui/sonner";
 import QueryProvider from "@/shared/infrastructure/tanstack-query/QueryProvider";
+import CrossTabLogoutListener from "@/shared/ui/CrossTabLogoutListener";
 
 const pretendard = localFont({
   src: "./font/PretendardVariable.woff2",
@@ -36,6 +37,7 @@ export default function RootLayout({
         <QueryProvider>
           {children}
         </QueryProvider>
+        <CrossTabLogoutListener />
         <Toaster richColors position="top-right" />
       </body>
     </html>

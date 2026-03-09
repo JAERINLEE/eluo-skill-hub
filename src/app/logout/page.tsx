@@ -1,9 +1,11 @@
 'use client';
 
 import { createClient } from '@/shared/infrastructure/supabase/client';
+import { broadcastLogout } from '@/shared/ui/CrossTabLogoutListener';
 
 export default function LogoutPage() {
   const handleLogout = async () => {
+    broadcastLogout();
     const supabase = createClient();
     await supabase.auth.signOut();
     window.location.href = '/signin';

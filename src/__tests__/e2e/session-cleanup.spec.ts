@@ -47,11 +47,9 @@ test.describe("세션 종료 기능 테스트", () => {
       console.log(`  ${c.name}: expires=${c.expires === -1 ? "session" : c.expires}`);
     });
 
-    // 쿠키 만료 시간 확인 (10분 = 600초 이내)
-    const now = Date.now() / 1000;
+    // 세션 쿠키 검증 (expires === -1 = 브라우저 종료 시 삭제)
     for (const cookie of authCookies) {
-      expect(cookie.expires).toBeGreaterThan(now);
-      expect(cookie.expires).toBeLessThanOrEqual(now + 600 + 10);
+      expect(cookie.expires).toBe(-1);
     }
 
     // 두 번째 컨텍스트 (새 브라우저 = 쿠키 없음, sessionStorage 없음)

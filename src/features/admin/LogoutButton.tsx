@@ -3,6 +3,7 @@
 import { useTransition } from 'react';
 import { LogOut } from 'lucide-react';
 import { signOut } from '@/app/admin/actions';
+import { broadcastLogout } from '@/shared/ui/CrossTabLogoutListener';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +20,7 @@ export default function LogoutButton() {
   const [isPending, startTransition] = useTransition();
 
   function handleConfirm() {
+    broadcastLogout();
     startTransition(() => {
       signOut();
     });

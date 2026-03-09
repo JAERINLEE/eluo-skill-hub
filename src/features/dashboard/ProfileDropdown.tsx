@@ -12,6 +12,7 @@ import {
 } from '@/shared/ui/dropdown-menu';
 import type { UserProfile } from '@/dashboard/domain/types';
 import { signOut } from '@/app/(portal)/dashboard/actions';
+import { broadcastLogout } from '@/shared/ui/CrossTabLogoutListener';
 
 interface ProfileDropdownProps {
   userProfile: UserProfile;
@@ -21,6 +22,7 @@ export default function ProfileDropdown({ userProfile }: ProfileDropdownProps) {
   const [isPending, startTransition] = useTransition();
 
   function handleSignOut() {
+    broadcastLogout();
     startTransition(() => {
       signOut();
     });

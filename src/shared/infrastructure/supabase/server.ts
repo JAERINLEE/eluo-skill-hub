@@ -19,9 +19,9 @@ export async function createClient() {
                 // 쿠키 삭제 요청 (signOut 등)은 그대로 전달
                 cookieStore.set(name, value, options);
               } else {
-                // 만료 시간 10분으로 고정 (브라우저 종료 + 비활동 시 자동 로그아웃)
+                // maxAge/expires 제거 → 세션 쿠키 (브라우저 종료 시 삭제)
                 const { maxAge: _maxAge, expires: _expires, ...sessionOptions } = options ?? {};
-                cookieStore.set(name, value, { ...sessionOptions, maxAge: 600 });
+                cookieStore.set(name, value, sessionOptions);
               }
             });
           } catch {

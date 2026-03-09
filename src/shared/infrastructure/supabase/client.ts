@@ -30,10 +30,8 @@ export function createClient() {
               // 쿠키 삭제 요청 (signOut 등)은 maxAge/expires 유지
               if (options?.maxAge !== undefined) cookie += `; max-age=${options.maxAge}`;
               if (options?.expires) cookie += `; expires=${options.expires.toUTCString()}`;
-            } else {
-              // 만료 시간 10분으로 고정 (브라우저 종료 + 비활동 시 자동 로그아웃)
-              cookie += '; max-age=600';
             }
+            // maxAge/expires 미설정 → 세션 쿠키 (브라우저 종료 시 삭제)
             document.cookie = cookie;
           });
         },
