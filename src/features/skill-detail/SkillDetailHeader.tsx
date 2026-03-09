@@ -1,4 +1,4 @@
-import { ShieldCheck, AlignLeft, Download } from 'lucide-react';
+import { AlignLeft, Download, Tag } from 'lucide-react';
 import type { SkillDetailPopup } from '@/skill-detail/domain/types';
 
 interface SkillDetailHeaderProps {
@@ -17,11 +17,28 @@ export default function SkillDetailHeader({ skill }: SkillDetailHeaderProps) {
           {skill.categoryName}
         </span>
         <span className="text-slate-300">/</span>
+        <span className="inline-flex items-center px-2.5 py-0.5 bg-[#00007F]/10 text-[#00007F] text-xs font-semibold rounded-full">
+          v{skill.version}
+        </span>
+        <span className="text-slate-300">/</span>
         <span className="flex items-center gap-1.5">
           <Download className="w-[18px] h-[18px]" />
           다운로드 {skill.downloadCount.toLocaleString()}회
         </span>
       </div>
+      {skill.tags.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 mt-3">
+          <Tag className="w-3.5 h-3.5 text-slate-400" />
+          {skill.tags.map((tag) => (
+            <span
+              key={tag}
+              className="inline-flex items-center px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-full"
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+      )}
       {skill.description && (
         <div className="mt-8">
           <h3 className="text-xl font-bold mb-5 flex items-center gap-2.5 text-[#00007F]">

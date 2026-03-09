@@ -1,10 +1,9 @@
 'use client';
 
-import { useMemo, type ReactNode, type ComponentProps } from 'react';
+import { useMemo, useState, useEffect, type ReactNode, type ComponentProps } from 'react';
 import Markdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
-import rehypeHighlight from 'rehype-highlight';
 import { parseFrontmatter } from '@/shared/utils/parse-frontmatter';
 import FrontmatterCard from './FrontmatterCard';
 import './notion-markdown.css';
@@ -102,13 +101,24 @@ export default function NotionStyleMarkdown({ content }: NotionStyleMarkdownProp
     [markdownBody],
   );
 
-  const rehypePlugins: RehypePlugin = useMemo(
-    () =>
-      hasCodeBlock
-        ? [[rehypeSanitize, sanitizeSchema], rehypeHighlight]
-        : [[rehypeSanitize, sanitizeSchema]],
-    [hasCodeBlock],
-  );
+  // rehype-highlight를 동적 import로 전환 — highlight.js 전체 번들(~60-90KB gzip) 절약
+  const [highlightPlugin, setHighlightPlugin] = useState<RehypePlugin | null>(null);
+
+  useEffect(() => {
+    if (!hasCodeBlock) return;
+    let cancelled = false;
+    import('rehype-highlight').then((mod) => {
+      if (!cancelled) {
+        setHighlightPlugin([[rehypeSanitize, sanitizeSchema], mod.default] as RehypePlugin);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [hasCodeBlock]);
+
+  const rehypePlugins: RehypePlugin = useMemo(() => {
+    if (hasCodeBlock && highlightPlugin) return highlightPlugin;
+    return [[rehypeSanitize, sanitizeSchema]];
+  }, [hasCodeBlock, highlightPlugin]);
 
   if (!content || !content.trim()) return null;
 

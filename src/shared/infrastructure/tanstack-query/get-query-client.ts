@@ -10,7 +10,7 @@ function makeQueryClient() {
       queries: {
         staleTime: 60 * 1000, // 1분
         gcTime: 5 * 60 * 1000, // 5분
-        refetchOnWindowFocus: true,
+        refetchOnWindowFocus: false,
         retry: 1,
       },
       dehydrate: {

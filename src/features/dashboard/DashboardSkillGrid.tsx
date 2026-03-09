@@ -1,17 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { X } from 'lucide-react';
 import { useIsViewer, useDashboardFilter } from './DashboardLayoutClient';
 import { useDashboardSkills } from '@/dashboard/hooks/use-dashboard-queries';
 import { useBookmarkedSkillIds } from '@/bookmark/hooks/use-bookmark-queries';
 import DashboardSkillCard from './DashboardSkillCard';
 import LoadMoreButton from './LoadMoreButton';
-
-const SkillDetailModal = dynamic(
-  () => import('@/features/skill-detail/SkillDetailModal'),
-  { ssr: false }
-);
 
 interface DashboardSkillGridProps {
   userId: string;
@@ -19,8 +14,7 @@ interface DashboardSkillGridProps {
 
 export default function DashboardSkillGrid({ userId }: DashboardSkillGridProps) {
   const isViewer = useIsViewer();
-  const { filter } = useDashboardFilter();
-  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
+  const { filter, setActiveTag } = useDashboardFilter();
 
   const categoryId =
     typeof filter.activeTab === 'object' && filter.activeTab.type === 'category'
@@ -30,6 +24,7 @@ export default function DashboardSkillGrid({ userId }: DashboardSkillGridProps) 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useDashboardSkills({
     search: filter.searchQuery,
     categoryId,
+    tag: filter.activeTag,
   });
   const { data: bookmarkedSkillIds } = useBookmarkedSkillIds(userId || undefined);
 
@@ -56,6 +51,20 @@ export default function DashboardSkillGrid({ userId }: DashboardSkillGridProps) 
         </div>
       </div>
 
+      {filter.activeTag && (
+        <div className="flex items-center gap-2 mb-6">
+          <span className="text-sm text-slate-500">태그 필터:</span>
+          <button
+            type="button"
+            onClick={() => setActiveTag(undefined)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#00007F]/10 text-[#00007F] text-sm font-semibold rounded-full hover:bg-[#00007F]/20 transition-colors"
+          >
+            #{filter.activeTag}
+            <X className="size-3.5" />
+          </button>
+        </div>
+      )}
+
       {isEmpty ? (
         <div className="flex flex-col items-center justify-center py-20 text-slate-400">
           <p className="text-lg font-medium">
@@ -73,13 +82,14 @@ export default function DashboardSkillGrid({ userId }: DashboardSkillGridProps) 
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {skills.map((skill) => (
-              <DashboardSkillCard
-                key={skill.id}
-                skill={skill}
-                isBookmarked={bookmarkedSkillIds?.includes(skill.id)}
-                userId={userId}
-                onClick={() => setSelectedSkillId(skill.id)}
-              />
+              <Link key={skill.id} href={`/skills/${skill.id}`} scroll={false}>
+                <DashboardSkillCard
+                  skill={skill}
+                  isBookmarked={bookmarkedSkillIds?.includes(skill.id)}
+                  userId={userId}
+                  onTagClick={(tag) => setActiveTag(tag)}
+                />
+              </Link>
             ))}
           </div>
 
@@ -91,14 +101,6 @@ export default function DashboardSkillGrid({ userId }: DashboardSkillGridProps) 
             />
           )}
         </>
-      )}
-
-      {selectedSkillId && (
-        <SkillDetailModal
-          skillId={selectedSkillId}
-          isViewer={isViewer}
-          onClose={() => setSelectedSkillId(null)}
-        />
       )}
     </div>
   );

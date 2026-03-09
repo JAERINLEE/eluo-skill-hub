@@ -7,8 +7,9 @@ export class GetDashboardSkillsUseCase {
     limit: number,
     offset: number = 0,
     search?: string,
-    categoryId?: string
+    categoryId?: string,
+    tag?: string
   ): Promise<DashboardSkillsResult> {
-    return this.repository.getPublishedSkills(limit, offset, search, categoryId);
+    return this.repository.getPublishedSkills(limit, offset, search, categoryId, tag);
   }
 }

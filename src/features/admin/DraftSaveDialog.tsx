@@ -40,6 +40,8 @@ export default function DraftSaveDialog({ pendingInput, onClose, onSaved, mode =
       formData.append('categoryId', pendingInput.categoryId);
       formData.append('title', pendingInput.title);
       formData.append('description', pendingInput.description);
+      formData.append('version', pendingInput.version);
+      formData.append('tags', JSON.stringify(pendingInput.tags));
       formData.append('isPublished', 'false');
       if (pendingInput.markdownFile) formData.append('markdownFile', pendingInput.markdownFile);
       for (const f of pendingInput.templateFiles ?? []) formData.append('templateFiles', f);

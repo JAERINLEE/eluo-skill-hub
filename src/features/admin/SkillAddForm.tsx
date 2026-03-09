@@ -12,6 +12,8 @@ import { createSkill, updateSkill as updateSkillAction, getCategories } from '@/
 import TemplateFileUpload from './TemplateFileUpload';
 import MarkdownFileUpload from './MarkdownFileUpload';
 import CategoryIcon from './CategoryIcon';
+import TagInput from './TagInput';
+import VersionHistoryList from './VersionHistoryList';
 
 interface SkillAddFormProps {
   categories?: CategoryOption[];
@@ -26,6 +28,8 @@ interface FormState {
   categoryId: string;
   title: string;
   description: string;
+  version: string;
+  tags: string[];
   isPublished: boolean;
 }
 
@@ -33,6 +37,8 @@ const INITIAL_STATE: FormState = {
   categoryId: '',
   title: '',
   description: '',
+  version: '1.0.0',
+  tags: [],
   isPublished: false,
 };
 
@@ -41,6 +47,8 @@ function isDirtyStateAdd(state: FormState, markdownFile: File | undefined, templ
     state.categoryId !== '' ||
     state.title !== '' ||
     state.description !== '' ||
+    state.version !== '1.0.0' ||
+    state.tags.length > 0 ||
     state.isPublished !== false ||
     markdownFile !== undefined ||
     templateFiles.length > 0
@@ -59,6 +67,8 @@ function isDirtyStateEdit(
     state.categoryId !== initial.categoryId ||
     state.title !== initial.title ||
     state.description !== initial.description ||
+    state.version !== initial.version ||
+    JSON.stringify(state.tags) !== JSON.stringify(initial.tags) ||
     state.isPublished !== initial.isPublished ||
     markdownFile !== undefined ||
     removeMarkdown ||
@@ -84,6 +94,8 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
       categoryId: initialData.categoryId,
       title: initialData.title,
       description: initialData.description,
+      version: initialData.version ?? '1.0.0',
+      tags: [...(initialData.tags ?? [])],
       isPublished: initialData.status === 'published',
     }
     : INITIAL_STATE;
@@ -149,6 +161,8 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
         categoryId: form.categoryId,
         title: form.title,
         description: form.description,
+        version: form.version,
+        tags: form.tags,
         isPublished: overridePublished ?? form.isPublished,
         markdownFile,
         removeMarkdown,
@@ -160,6 +174,8 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
       categoryId: form.categoryId,
       title: form.title,
       description: form.description,
+      version: form.version,
+      tags: form.tags,
       isPublished: overridePublished ?? form.isPublished,
       markdownFile,
       templateFiles: templateFiles.length > 0 ? templateFiles : undefined,
@@ -174,6 +190,8 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
       formData.append('categoryId', form.categoryId);
       formData.append('title', form.title);
       formData.append('description', form.description);
+      formData.append('version', form.version);
+      formData.append('tags', JSON.stringify(form.tags));
       formData.append('isPublished', String(form.isPublished));
       if (markdownFile) formData.append('markdownFile', markdownFile);
       for (const f of templateFiles) formData.append('templateFiles', f);
@@ -222,7 +240,7 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
   return (
     <form onSubmit={handleSubmit} className="flex flex-col md:flex-row max-h-[92vh]">
       {/* 좌측 패널 — 제목 + 상세 설명 */}
-      <div className="flex-1 overflow-y-auto p-10 md:p-14 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto p-8 scrollbar-hide">
         {/* 제목 */}
         <div className="mb-10">
           <label className="block text-[12px] font-extrabold uppercase tracking-wider text-slate-400 mb-3 ml-1">제목</label>
@@ -260,6 +278,19 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
             )}
           </section>
 
+          {/* 태그 */}
+          <section>
+            <label className="block text-[12px] font-extrabold uppercase tracking-wider text-slate-400 mb-3">태그</label>
+            <TagInput
+              tags={form.tags}
+              onChange={(tags) => {
+                const newForm = { ...form, tags };
+                setForm(newForm);
+                notifyDirty(newForm, markdownFile, templateFiles);
+              }}
+            />
+          </section>
+
           <section>
             <label className="flex items-center gap-2 text-sm font-bold text-[#1a1a1a] mb-4">
               상세 설명
@@ -276,7 +307,7 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
       </div>
 
       {/* 우측 사이드바 */}
-      <div className="w-full md:w-96 bg-[#F0F0F0]/50 border-t md:border-t-0 md:border-l border-slate-200/50 p-10 flex flex-col gap-8 backdrop-blur-md">
+      <div className="w-full md:w-96 bg-[#F0F0F0]/50 border-t md:border-t-0 md:border-l border-slate-200/50 p-10 flex flex-col gap-8 backdrop-blur-md overflow-y-auto scrollbar-hide">
         {/* 카테고리 */}
         <section>
           <label className="block text-[12px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-5">카테고리</label>
@@ -300,6 +331,34 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
           )}
         </section>
 
+        {/* 버전 + 공개 여부 */}
+        <section className="flex gap-4">
+          <div className="flex-1">
+            <label className="block text-[12px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-5">버전</label>
+            <input
+              id="version"
+              value={form.version}
+              onChange={(e) => updateField('version', e.target.value)}
+              placeholder="1.0.0"
+              maxLength={20}
+              className="w-full bg-white border border-slate-200 rounded-xl py-3.5 px-5 text-sm font-bold focus:border-[#00007F] focus:ring-0 focus:outline-none transition-all"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="block text-[12px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-5">공개 여부</label>
+            <div className="flex items-center justify-between bg-white rounded-xl py-3.5 px-4 border border-slate-200">
+              <p className="text-xs font-bold text-[#1a1a1a]">
+                {form.isPublished ? '공개' : '초안'}
+              </p>
+              <Switch
+                checked={form.isPublished}
+                onCheckedChange={(v) => updateField('isPublished', v)}
+                aria-label="공개 여부"
+              />
+            </div>
+          </div>
+        </section>
+
         {/* 템플릿 파일 업로드 */}
         <section>
           <label className="block text-[12px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-5">템플릿 파일 업로드</label>
@@ -312,22 +371,12 @@ export default function SkillAddForm({ categories: initialCategories, onDirtyCha
           />
         </section>
 
-        {/* 공개 여부 */}
-        <section>
-          <label className="block text-[12px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-5">공개 여부</label>
-          <div className="flex items-center justify-between bg-white rounded-xl p-4 border border-slate-100">
-            <div>
-              <p className="text-sm font-bold text-[#1a1a1a]">
-                {form.isPublished ? '즉시 공개됩니다' : '초안으로 저장됩니다'}
-              </p>
-            </div>
-            <Switch
-              checked={form.isPublished}
-              onCheckedChange={(v) => updateField('isPublished', v)}
-              aria-label="공개 여부"
-            />
-          </div>
-        </section>
+        {/* 버전 이력 (수정 모드) */}
+        {isEditMode && initialData?.versionHistory && (
+          <section>
+            <VersionHistoryList history={initialData.versionHistory} />
+          </section>
+        )}
 
         {/* 버튼 */}
         <div className="mt-auto pt-6 space-y-4">

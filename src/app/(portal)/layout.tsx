@@ -15,8 +15,10 @@ const DEFAULT_LIMIT = 9;
 
 export default async function DashboardLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal?: React.ReactNode;
 }) {
   const { user } = await getCurrentUser();
 
@@ -71,6 +73,7 @@ export default async function DashboardLayout({
         userId={user.id}
       >
         {children}
+        {modal}
       </DashboardLayoutClient>
     </HydrationBoundary>
   );

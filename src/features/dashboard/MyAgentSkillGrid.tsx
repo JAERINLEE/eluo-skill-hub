@@ -1,25 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { Bookmark } from 'lucide-react';
 import { useBookmarkedSkills } from '@/bookmark/hooks/use-bookmark-queries';
-import { useIsViewer } from './DashboardLayoutClient';
 import DashboardSkillCard from './DashboardSkillCard';
-
-const SkillDetailModal = dynamic(
-  () => import('@/features/skill-detail/SkillDetailModal'),
-  { ssr: false }
-);
 
 interface MyAgentSkillGridProps {
   userId: string;
 }
 
 export default function MyAgentSkillGrid({ userId }: MyAgentSkillGridProps) {
-  const isViewer = useIsViewer();
   const { data: skills } = useBookmarkedSkills(userId);
-  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
 
   const isEmpty = !skills || skills.length === 0;
 
@@ -45,23 +36,15 @@ export default function MyAgentSkillGrid({ userId }: MyAgentSkillGridProps) {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {skills.map((skill) => (
-            <DashboardSkillCard
-              key={skill.id}
-              skill={skill}
-              isBookmarked={true}
-              userId={userId}
-              onClick={() => setSelectedSkillId(skill.id)}
-            />
+            <Link key={skill.id} href={`/skills/${skill.id}`} scroll={false}>
+              <DashboardSkillCard
+                skill={skill}
+                isBookmarked={true}
+                userId={userId}
+              />
+            </Link>
           ))}
         </div>
-      )}
-
-      {selectedSkillId && (
-        <SkillDetailModal
-          skillId={selectedSkillId}
-          isViewer={isViewer}
-          onClose={() => setSelectedSkillId(null)}
-        />
       )}
     </div>
   );

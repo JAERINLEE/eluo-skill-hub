@@ -13,7 +13,7 @@ const pretendard = localFont({
 });
 
 const eluo = localFont({
-  src: "./font/ELUOFACEVF.ttf",
+  src: "./font/ELUOFACEVF.woff2",
   variable: "--font-eluo-face",
   display: "swap",
 });

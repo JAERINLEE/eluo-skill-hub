@@ -5,6 +5,8 @@ export interface SkillDetailPopup {
   readonly description: string | null;
   readonly categoryName: string;
   readonly categoryIcon: string;
+  readonly version: string;
+  readonly tags: readonly string[];
   readonly markdownContent: string | null;
   readonly authorName: string | null;
   readonly updatedAt: string;

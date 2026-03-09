@@ -9,11 +9,12 @@ const PAGE_SIZE = 9;
 export function useDashboardSkills(params: {
   search?: string;
   categoryId?: string;
+  tag?: string;
 }) {
   return useInfiniteQuery({
     queryKey: queryKeys.dashboard.skills(params),
     queryFn: ({ pageParam = 0 }) =>
-      getDashboardSkillsAction(PAGE_SIZE, pageParam, params.search, params.categoryId),
+      getDashboardSkillsAction(PAGE_SIZE, pageParam, params.search, params.categoryId, params.tag),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) =>
       lastPage.hasMore ? allPages.length * PAGE_SIZE : undefined,

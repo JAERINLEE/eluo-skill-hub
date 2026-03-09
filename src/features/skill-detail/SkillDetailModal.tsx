@@ -85,6 +85,7 @@ export default function SkillDetailModal({
         background: 'rgba(0, 0, 127, 0.1)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
+        willChange: 'transform',
       }}
       onClick={onClose}
     >

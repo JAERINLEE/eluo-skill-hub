@@ -25,12 +25,14 @@ export function useCurrentUserId(): string {
 interface DashboardFilterState {
   activeTab: SidebarTab;
   searchQuery?: string;
+  activeTag?: string;
 }
 
 interface DashboardFilterContextValue {
   filter: DashboardFilterState;
   setActiveTab: (tab: SidebarTab) => void;
   setSearchQuery: (query?: string) => void;
+  setActiveTag: (tag?: string) => void;
 }
 
 const DashboardFilterContext = createContext<DashboardFilterContextValue | null>(null);
@@ -89,6 +91,10 @@ export default function DashboardLayoutClient({
     setFilter((prev) => ({ ...prev, searchQuery: query }));
   }, []);
 
+  const setActiveTag = useCallback((tag?: string) => {
+    setFilter((prev) => ({ ...prev, activeTag: tag }));
+  }, []);
+
   const breadcrumb =
     filter.activeTab === 'dashboard'
       ? '전체'
@@ -102,7 +108,7 @@ export default function DashboardLayoutClient({
     <IsViewerContext.Provider value={isViewer}>
       <IsAdminContext.Provider value={isAdmin}>
         <UserIdContext.Provider value={userId}>
-          <DashboardFilterContext.Provider value={{ filter, setActiveTab, setSearchQuery }}>
+          <DashboardFilterContext.Provider value={{ filter, setActiveTab, setSearchQuery, setActiveTag }}>
             <div className="flex h-screen overflow-hidden">
               <DashboardSidebar
                 categories={categories}
