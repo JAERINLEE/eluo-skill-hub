@@ -37,7 +37,7 @@ export default function DashboardSkillGrid({ userId }: DashboardSkillGridProps) 
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-4 md:mb-8">
         <div>
           <h3 className="text-xl font-bold text-[#00007F]">
             자동화 스킬
@@ -66,7 +66,7 @@ export default function DashboardSkillGrid({ userId }: DashboardSkillGridProps) 
       )}
 
       {isEmpty ? (
-        <div className="flex flex-col items-center justify-center py-20 text-slate-400">
+        <div className="flex flex-col items-center justify-center py-12 md:py-20 text-slate-400">
           <p className="text-lg font-medium">
             {isSearchResult
               ? '검색 결과가 없습니다'
@@ -80,7 +80,7 @@ export default function DashboardSkillGrid({ userId }: DashboardSkillGridProps) 
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {skills.map((skill) => (
               <Link key={skill.id} href={`/skills/${skill.id}`} scroll={false}>
                 <DashboardSkillCard

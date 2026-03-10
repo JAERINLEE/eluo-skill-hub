@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
-import { X, Info } from 'lucide-react';
+import { useEffect, useCallback, useState } from 'react';
+import { X, Info, FileDown } from 'lucide-react';
 import { useSkillDetail, useSkillFeedbacks } from '@/skill-detail/hooks/use-skill-detail-queries';
 import { useCurrentUserId, useIsAdmin } from '@/features/dashboard/DashboardLayoutClient';
 import { useTrackEvent } from '@/event-log/hooks/use-track-event';
@@ -76,7 +76,58 @@ export default function SkillDetailModal({
     };
   }, [onClose]);
 
+  const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
+
   const totalFileSize = skill?.templates.reduce((sum, t) => sum + t.fileSize, 0) ?? 0;
+
+  const sidebarContent = (
+    <>
+      <div>
+        <h4 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-5">
+          실행하기
+        </h4>
+        <div className="space-y-4">
+          <TemplateDownloadButton
+            skillId={skillId}
+            templates={skill?.templates ?? []}
+            isViewer={isViewer}
+          />
+        </div>
+      </div>
+
+      <div className="mt-4 md:mt-8 pt-4 md:pt-8 border-t border-slate-200">
+        <div className="p-6 bg-white/80 rounded-2xl border border-white shadow-sm">
+          <h5 className="text-[11px] font-extrabold text-[#00007F] uppercase tracking-wider mb-5 flex items-center gap-2">
+            <Info className="w-3.5 h-3.5" /> 스킬 상세 정보
+          </h5>
+          <div className="space-y-4 text-[13px] text-[#1a1a1a]">
+            <div className="flex justify-between items-center">
+              <span className="text-slate-500">최초 등록일</span>
+              <span className="font-bold">
+                {skill ? formatDate(skill.createdAt) : '-'}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-slate-500">최근 업데이트</span>
+              <span className="font-bold">
+                {skill ? formatDate(skill.updatedAt) : '-'}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-slate-500">파일 크기</span>
+              <span className="font-bold">
+                {totalFileSize > 0 ? formatFileSize(totalFileSize) : '-'}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-slate-500">카테고리</span>
+              <span className="font-bold">{skill?.categoryName ?? '-'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <div
@@ -138,54 +189,46 @@ export default function SkillDetailModal({
           ) : null}
         </div>
 
-        {/* Right sidebar */}
-        <div className="w-full md:w-96 bg-[#F0F0F0]/50 border-t md:border-t-0 md:border-l border-slate-200/50 p-10 flex flex-col gap-6 backdrop-blur-md">
-          <div>
-            <h4 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-slate-400 mb-5">
-              실행하기
-            </h4>
-            <div className="space-y-4">
-              <TemplateDownloadButton
-                skillId={skillId}
-                templates={skill?.templates ?? []}
-                isViewer={isViewer}
-              />
-            </div>
-          </div>
-
-          <div className="mt-8 pt-8 border-t border-slate-200">
-            <div className="p-6 bg-white/80 rounded-2xl border border-white shadow-sm">
-              <h5 className="text-[11px] font-extrabold text-[#00007F] uppercase tracking-wider mb-5 flex items-center gap-2">
-                <Info className="w-3.5 h-3.5" /> 스킬 상세 정보
-              </h5>
-              <div className="space-y-4 text-[13px] text-[#1a1a1a]">
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500">최초 등록일</span>
-                  <span className="font-bold">
-                    {skill ? formatDate(skill.createdAt) : '-'}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500">최근 업데이트</span>
-                  <span className="font-bold">
-                    {skill ? formatDate(skill.updatedAt) : '-'}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500">파일 크기</span>
-                  <span className="font-bold">
-                    {totalFileSize > 0 ? formatFileSize(totalFileSize) : '-'}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500">카테고리</span>
-                  <span className="font-bold">{skill?.categoryName ?? '-'}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Right sidebar — desktop only */}
+        <div className="hidden md:flex w-96 bg-[#F0F0F0]/50 border-l border-slate-200/50 p-10 flex-col gap-6 backdrop-blur-md shrink-0 overflow-y-auto">
+          {sidebarContent}
         </div>
       </div>
+
+      {/* Mobile floating CTA button */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setBottomSheetOpen(true);
+        }}
+        className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-6 py-3.5 bg-[#00007F] text-white font-bold rounded-full text-sm shadow-lg shadow-[#00007F]/30 flex items-center gap-2 active:scale-95 transition-transform"
+      >
+        <FileDown className="w-4 h-4" />
+        실행 및 상세정보
+      </button>
+
+      {/* Mobile bottom sheet */}
+      {bottomSheetOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-[70] bg-black/40"
+          onClick={(e) => {
+            e.stopPropagation();
+            setBottomSheetOpen(false);
+          }}
+        >
+          <div
+            className="absolute bottom-0 left-0 right-0 max-h-[75vh] overflow-y-auto rounded-t-2xl bg-white p-6 pb-10 animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Drag handle */}
+            <div className="flex justify-center mb-4">
+              <div className="w-10 h-1 rounded-full bg-slate-300" />
+            </div>
+            {sidebarContent}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

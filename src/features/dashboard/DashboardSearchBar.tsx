@@ -31,16 +31,16 @@ export default function DashboardSearchBar({
   }
 
   return (
-    <div className="max-w-4xl mx-auto mb-16">
-      <h2 className="text-4xl font-bold mb-8 tracking-tight text-[#00007F]">
+    <div className="max-w-4xl mx-auto mb-8 md:mb-16">
+      <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-8 tracking-tight text-[#00007F]">
         무엇을 도와드릴까요?
       </h2>
       <div className="relative group bg-white rounded-2xl overflow-hidden transition-all border border-[#00007F]/20 focus-within:shadow-[0_0_0_4px_rgba(0,0,127,0.05)] focus-within:border-[#00007F]/40">
-        <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+        <div className="absolute inset-y-0 left-0 pl-4 md:pl-5 flex items-center pointer-events-none">
           <Search size={20} className="text-slate-400 group-focus-within:text-[#00007F] transition-colors" />
         </div>
         <input
-          className="w-full pl-14 pr-36 py-5 bg-transparent border-none focus:ring-0 outline-none text-lg placeholder:text-slate-400"
+          className="w-full pl-11 md:pl-14 pr-20 md:pr-36 py-3.5 md:py-5 bg-transparent border-none focus:ring-0 outline-none text-base md:text-lg placeholder:text-slate-400"
           placeholder="업무 효율을 높여줄 AI 스킬을 검색하세요..."
           type="text"
           value={query}
@@ -50,7 +50,7 @@ export default function DashboardSearchBar({
         <button
           type="button"
           onClick={handleSearch}
-          className="absolute right-3 top-3 bottom-3 px-8 bg-[#FEFE01] text-[#00007F] font-bold rounded-xl text-sm hover:brightness-105 transition-all shadow-md"
+          className="absolute right-3 top-3 bottom-3 px-4 md:px-8 bg-[#FEFE01] text-[#00007F] font-bold rounded-xl text-sm hover:brightness-105 transition-all shadow-md"
         >
           검색하기
         </button>

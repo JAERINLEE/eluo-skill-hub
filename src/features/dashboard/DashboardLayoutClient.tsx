@@ -83,6 +83,12 @@ export default function DashboardLayoutClient({
     searchQuery: initialSearchQuery,
   });
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen((prev) => !prev);
+  }, []);
+
   const setActiveTab = useCallback((tab: SidebarTab) => {
     setFilter((prev) => ({ ...prev, activeTab: tab }));
   }, []);
@@ -110,14 +116,26 @@ export default function DashboardLayoutClient({
         <UserIdContext.Provider value={userId}>
           <DashboardFilterContext.Provider value={{ filter, setActiveTab, setSearchQuery, setActiveTag }}>
             <div className="flex h-screen overflow-hidden">
+              {sidebarOpen && (
+                <div
+                  className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                  onClick={() => setSidebarOpen(false)}
+                />
+              )}
               <DashboardSidebar
                 categories={categories}
                 activeTab={filter.activeTab}
                 onTabChange={setActiveTab}
+                isOpen={sidebarOpen}
+                onClose={() => setSidebarOpen(false)}
               />
               <main className="flex-1 flex flex-col min-w-0 bg-[#F0F0F0] overflow-hidden relative">
-                <DashboardHeader breadcrumb={breadcrumb} userProfile={userProfile} />
-                <div className="flex-1 overflow-y-auto p-10" style={{ scrollbarWidth: 'none' }}>
+                <DashboardHeader
+                  breadcrumb={breadcrumb}
+                  userProfile={userProfile}
+                  onMenuToggle={toggleSidebar}
+                />
+                <div className="flex-1 overflow-y-auto p-4 md:p-10" style={{ scrollbarWidth: 'none' }}>
                   {children}
                 </div>
               </main>

@@ -11,12 +11,16 @@ interface DashboardSidebarProps {
   categories: CategoryItem[];
   activeTab: SidebarTab;
   onTabChange: (tab: SidebarTab) => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 export default function DashboardSidebar({
   categories,
   activeTab,
   onTabChange,
+  isOpen = false,
+  onClose,
 }: DashboardSidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -37,6 +41,7 @@ export default function DashboardSidebar({
   function handleDashboardClick() {
     trackEvent('nav.sidebar_click', { tab: 'dashboard' });
     onTabChange('dashboard');
+    onClose?.();
     if (pathname !== '/dashboard') {
       router.push('/dashboard');
     }
@@ -49,6 +54,7 @@ export default function DashboardSidebar({
       categoryId: cat.id,
       categoryName: cat.name,
     });
+    onClose?.();
     if (pathname !== '/dashboard') {
       router.push('/dashboard');
     }
@@ -57,13 +63,16 @@ export default function DashboardSidebar({
   function handleMyAgentsClick() {
     trackEvent('nav.sidebar_click', { tab: 'my-agents' });
     onTabChange('my-agents');
+    onClose?.();
     if (pathname !== '/myagent') {
       router.push('/myagent');
     }
   }
 
   return (
-    <aside className="w-72 flex flex-col h-full shrink-0 text-white z-20 border-r border-white/10 bg-[rgba(0,0,127,0.9)] backdrop-blur-xl">
+    <aside
+      className={`fixed inset-y-0 left-0 z-50 md:static md:z-20 w-72 flex flex-col h-full shrink-0 text-white border-r border-white/10 bg-[rgba(0,0,127,0.9)] backdrop-blur-xl transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+    >
       <div className="p-8">
         <button
           type="button"
@@ -143,6 +152,7 @@ export default function DashboardSidebar({
           onClick={() => {
             trackEvent('nav.sidebar_click', { tab: 'help' });
             onTabChange('help');
+            onClose?.();
             if (pathname !== '/help') {
               router.push('/help');
             }

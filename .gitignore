@@ -22,6 +22,8 @@
 .DS_Store
 *.pem
 Thumbs.db
+package-lock.json
+yarn.lock
 
 # debug
 npm-debug.log*
