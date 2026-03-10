@@ -9,7 +9,7 @@ interface TagInputProps {
   maxLength?: number;
 }
 
-export default function TagInput({ tags, onChange, maxTags = 10, maxLength = 30 }: TagInputProps) {
+export default function TagInput({ tags, onChange, maxTags = 5, maxLength = 30 }: TagInputProps) {
   const [inputValue, setInputValue] = useState('');
 
   const addTag = (raw: string) => {
