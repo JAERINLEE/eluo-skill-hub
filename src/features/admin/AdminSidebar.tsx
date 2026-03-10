@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Users, Zap, MessageSquare, BarChart3 } from 'lucide-react';
+import Image from 'next/image';
 
 interface AdminSidebarProps {
   userName: string;
@@ -32,11 +33,17 @@ export default function AdminSidebar({ userName, userRole }: AdminSidebarProps) 
       <div className="p-6 flex-1">
         {/* Logo */}
         <Link href="/admin" className="flex items-center gap-2 mb-8">
-          <div className="size-8 bg-[#000080] rounded-lg flex items-center justify-center">
-            <Zap strokeWidth={2.5} className="size-4 text-[#FEFE01] fill-[#FEFE01]" />
+          <div className="w-10 h-10 bg-[#FEFE01] rounded-xl flex items-center justify-center text-[#00007F] shadow-[0_0_15px_rgba(254,254,1,0.3)]">
+            <Image
+              src="/eluo-logo.svg"
+              alt="ELUO logo"
+              width={28}
+              height={28}
+              priority
+            />
           </div>
           <div>
-            <h1 className="text-[#000080] font-bold text-lg leading-none">Eluo Hub</h1>
+            <h1 className="text-[#000080] font-bold text-lg leading-none">ELUO HUB</h1>
             <p className="text-[10px] text-[#000080]/60 uppercase tracking-widest font-semibold">
               Admin
             </p>

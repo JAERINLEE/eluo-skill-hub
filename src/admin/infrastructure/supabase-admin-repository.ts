@@ -3,10 +3,13 @@ import { uploadFile, deleteFile } from '@/shared/infrastructure/supabase/storage
 import type {
   AdminRepository,
   CategoryOption,
+  CreateFeedbackReplyInput,
+  CreateFeedbackReplyResult,
   CreateSkillInput,
   CreateSkillResult,
   DashboardStats,
   DeleteSkillResult,
+  FeedbackReplyRow,
   FeedbackRow,
   GetSkillResult,
   MemberRow,
@@ -267,20 +270,41 @@ export class SupabaseAdminRepository implements AdminRepository {
     const { data, count } = await supabase
       .from('skill_feedback_logs')
       .select(
-        'id, rating, comment, created_at, profiles(email), skills(title)',
+        'id, comment, is_secret, created_at, profiles!skill_feedback_logs_user_id_profiles_fkey(email), skills(title)',
         { count: 'exact' }
       )
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
       .range(from, to);
 
     const totalCount = count ?? 0;
+    const feedbackIds = (data ?? []).map((row) => row.id as string);
+
+    // Batch-query reply counts for the fetched feedback IDs
+    let replyCountMap: Record<string, number> = {};
+    if (feedbackIds.length > 0) {
+      const { data: replyData } = await supabase
+        .from('feedback_replies')
+        .select('feedback_id')
+        .in('feedback_id', feedbackIds);
+
+      if (replyData) {
+        replyCountMap = replyData.reduce<Record<string, number>>((acc, row) => {
+          const fid = row.feedback_id as string;
+          acc[fid] = (acc[fid] ?? 0) + 1;
+          return acc;
+        }, {});
+      }
+    }
+
     const rows: FeedbackRow[] = (data ?? []).map((row) => ({
       id: row.id as string,
-      rating: row.rating as number,
       comment: (row.comment as string | null) ?? null,
       userName: extractEmail(row.profiles as JoinedEmail),
       skillTitle: extractTitle(row.skills as JoinedTitle),
       createdAt: row.created_at as string,
+      isSecret: (row.is_secret as boolean | null) ?? false,
+      replyCount: replyCountMap[row.id as string] ?? 0,
     }));
 
     return {
@@ -290,6 +314,38 @@ export class SupabaseAdminRepository implements AdminRepository {
       pageSize,
       totalPages: Math.ceil(totalCount / pageSize),
     };
+  }
+
+  async getFeedbackReplies(feedbackId: string): Promise<FeedbackReplyRow[]> {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from('feedback_replies')
+      .select('id, feedback_id, content, created_at, profiles!feedback_replies_user_id_profiles_fkey(email)')
+      .eq('feedback_id', feedbackId)
+      .order('created_at', { ascending: false });
+
+    if (!data) return [];
+    return data.map((row) => ({
+      id: row.id as string,
+      feedbackId: row.feedback_id as string,
+      userName: extractEmail(row.profiles as JoinedEmail),
+      content: row.content as string,
+      createdAt: row.created_at as string,
+    }));
+  }
+
+  async createFeedbackReply(userId: string, input: CreateFeedbackReplyInput): Promise<CreateFeedbackReplyResult> {
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from('feedback_replies')
+      .insert({
+        feedback_id: input.feedbackId,
+        user_id: userId,
+        content: input.content,
+      });
+
+    if (error) return { success: false, error: '댓글 등록에 실패했습니다.' };
+    return { success: true };
   }
 
   // T009: getAllRoles

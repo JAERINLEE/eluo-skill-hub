@@ -102,8 +102,8 @@ export default function FeedbackItem({ feedback, skillId, currentUserId, isAdmin
             <div className="mt-4 space-y-4 ml-2">
               {feedback.replies.map((reply) => {
                 const replyIsOwner = reply.userId === currentUserId;
-                const replyCanView = replyIsOwner || isAdmin;
-                const isMasked = feedback.isSecret && !replyCanView && reply.content === '비밀글입니다.';
+                const canViewReply = isOwner || isAdmin || replyIsOwner;
+                const isMasked = feedback.isSecret && !canViewReply;
 
                 return (
                   <div key={reply.id} className="flex gap-3 p-3 bg-slate-50 rounded-xl">
@@ -133,7 +133,7 @@ export default function FeedbackItem({ feedback, skillId, currentUserId, isAdmin
                       <p className={`text-sm ${
                         isMasked ? 'text-slate-400 italic' : 'text-[#1a1a1a] opacity-80'
                       }`}>
-                        {reply.content}
+                        {isMasked ? '비밀글입니다.' : reply.content}
                       </p>
                     </div>
                   </div>
@@ -183,7 +183,7 @@ export default function FeedbackItem({ feedback, skillId, currentUserId, isAdmin
               ? 'text-slate-400 italic'
               : 'text-[#1a1a1a] opacity-80'
           }`}>
-            {feedback.comment}
+            {feedback.isSecret && !canViewSecret ? '비밀글입니다.' : feedback.comment}
           </p>
         )}
 
@@ -192,8 +192,8 @@ export default function FeedbackItem({ feedback, skillId, currentUserId, isAdmin
           <div className="mt-4 space-y-4 ml-2">
             {feedback.replies.map((reply) => {
               const replyIsOwner = reply.userId === currentUserId;
-              const replyCanView = replyIsOwner || isAdmin;
-              const isMasked = feedback.isSecret && !replyCanView && reply.content === '비밀글입니다.';
+              const canViewReply = isOwner || isAdmin || replyIsOwner;
+              const isMasked = feedback.isSecret && !canViewReply;
 
               return (
                 <div key={reply.id} className="flex gap-3 p-3 bg-slate-50 rounded-xl">
@@ -223,7 +223,7 @@ export default function FeedbackItem({ feedback, skillId, currentUserId, isAdmin
                     <p className={`text-sm ${
                       isMasked ? 'text-slate-400 italic' : 'text-[#1a1a1a] opacity-80'
                     }`}>
-                      {reply.content}
+                      {isMasked ? '비밀글입니다.' : reply.content}
                     </p>
                   </div>
                 </div>
@@ -232,31 +232,33 @@ export default function FeedbackItem({ feedback, skillId, currentUserId, isAdmin
           </div>
         )}
 
-        {/* Reply input */}
-        <div className="mt-4 ml-2 flex gap-2">
-          <input
-            type="text"
-            value={replyContent}
-            onChange={(e) => setReplyContent(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleReplySubmit();
-              }
-            }}
-            disabled={submitting}
-            placeholder="댓글을 입력하세요..."
-            className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#00007F]/10 focus:border-[#00007F] transition-all placeholder:text-slate-400"
-          />
-          <button
-            onClick={handleReplySubmit}
-            disabled={submitting || !replyContent.trim()}
-            className="px-4 py-2.5 bg-[#00007F] text-white rounded-xl text-sm font-bold hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
-          >
-            <Send className="w-3.5 h-3.5" />
-            등록
-          </button>
-        </div>
+        {/* Reply input — hidden when viewer cannot read the secret feedback */}
+        {!(feedback.isSecret && !canViewSecret) && (
+          <div className="mt-4 ml-2 flex gap-2">
+            <input
+              type="text"
+              value={replyContent}
+              onChange={(e) => setReplyContent(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleReplySubmit();
+                }
+              }}
+              disabled={submitting}
+              placeholder="댓글을 입력하세요..."
+              className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#00007F]/10 focus:border-[#00007F] transition-all placeholder:text-slate-400"
+            />
+            <button
+              onClick={handleReplySubmit}
+              disabled={submitting || !replyContent.trim()}
+              className="px-4 py-2.5 bg-[#00007F] text-white rounded-xl text-sm font-bold hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+            >
+              <Send className="w-3.5 h-3.5" />
+              등록
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

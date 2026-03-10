@@ -96,12 +96,30 @@ export interface SkillTemplateRow {
 
 export interface FeedbackRow {
   readonly id: string;
-  readonly rating: number;
   readonly comment: string | null;
   readonly userName: string;
   readonly skillTitle: string;
   readonly createdAt: string;
+  readonly isSecret: boolean;
+  readonly replyCount: number;
 }
+
+export interface FeedbackReplyRow {
+  readonly id: string;
+  readonly feedbackId: string;
+  readonly userName: string;
+  readonly content: string;
+  readonly createdAt: string;
+}
+
+export interface CreateFeedbackReplyInput {
+  readonly feedbackId: string;
+  readonly content: string;
+}
+
+export type CreateFeedbackReplyResult =
+  | { success: true }
+  | { success: false; error: string };
 
 export interface PaginatedResult<T> {
   readonly data: T[];
@@ -174,6 +192,8 @@ export interface AdminRepository {
   getSkills(page: number, pageSize: number, search?: string, status?: SkillStatusFilter, categoryId?: string): Promise<PaginatedResult<SkillRow>>;
   getSkillStatusCounts(): Promise<SkillStatusCounts>;
   getFeedbacks(page: number, pageSize: number): Promise<PaginatedResult<FeedbackRow>>;
+  getFeedbackReplies(feedbackId: string): Promise<FeedbackReplyRow[]>;
+  createFeedbackReply(userId: string, input: CreateFeedbackReplyInput): Promise<CreateFeedbackReplyResult>;
   getAllRoles(): Promise<Role[]>;
   updateMemberRole(memberId: string, roleId: string): Promise<void>;
   getAdminCount(): Promise<number>;
