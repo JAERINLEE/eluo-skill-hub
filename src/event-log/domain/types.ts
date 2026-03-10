@@ -7,6 +7,7 @@ export type EventName =
   | 'skill.bookmark_remove'
   | 'skill.template_download'
   | 'search.query'
+  | 'search.tag'
   | 'nav.sidebar_click';
 
 export interface EventPropertiesMap {
@@ -18,6 +19,7 @@ export interface EventPropertiesMap {
   'skill.bookmark_remove': { skill_id: string };
   'skill.template_download': { skill_id: string; template_id: string };
   'search.query': { query: string };
+  'search.tag': { tag: string };
   'nav.sidebar_click': { tab: string };
 }
 
