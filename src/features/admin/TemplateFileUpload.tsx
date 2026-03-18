@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { Paperclip, X } from 'lucide-react';
+import { toast } from 'sonner';
 import type { SkillTemplateRow } from '@/admin/domain/types';
 
 interface TemplateFileUploadProps {
@@ -13,11 +14,12 @@ interface TemplateFileUploadProps {
 }
 
 const MAX_COUNT = 5;
-const MAX_SIZE = 512000; // 500KB
+const MAX_SIZE = 52428800; // 50MB
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes}B`;
-  return `${(bytes / 1024).toFixed(1)}KB`;
+  if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)}KB`;
+  return `${(bytes / 1048576).toFixed(1)}MB`;
 }
 
 export default function TemplateFileUpload({ files, onChange, error, existingFiles, onExistingRemoved }: TemplateFileUploadProps) {
@@ -31,7 +33,10 @@ export default function TemplateFileUpload({ files, onChange, error, existingFil
     const selected = Array.from(e.target.files ?? []);
     const valid = selected.filter((f) => {
       if (!f.name.endsWith('.zip') && !f.name.endsWith('.md')) return false;
-      if (f.size > MAX_SIZE) return false;
+      if (f.size > MAX_SIZE) {
+        toast.error(`"${f.name}" 파일 용량이 50MB를 초과하여 업로드할 수 없습니다.`);
+        return false;
+      }
       return true;
     });
     const remainingSlots = MAX_COUNT - visibleExisting.length;

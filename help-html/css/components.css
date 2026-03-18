@@ -1,0 +1,514 @@
+/* ==========================================================================
+   components.css — UI Components
+   ========================================================================== */
+
+/* ── 1. Button ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn--primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+.btn--primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn--outline {
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+.btn--outline:hover {
+  border-color: var(--color-gray-400);
+  background-color: var(--color-gray-50);
+}
+
+.btn--navy {
+  background-color: var(--color-navy);
+  color: var(--color-text-on-navy);
+}
+
+.btn--navy:hover {
+  background-color: var(--color-navy-light);
+}
+
+.btn--sm {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-xs);
+}
+
+.btn--lg {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--font-base);
+}
+
+/* ── 2. Card ── */
+.card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.card__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.card__title {
+  font-size: var(--font-lg);
+  font-weight: var(--weight-bold);
+  margin-bottom: var(--space-2);
+}
+
+.card__desc {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-4);
+}
+
+.card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.card__link {
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-navy);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.card__link:hover {
+  color: var(--color-navy-light);
+}
+
+.card__link::after {
+  content: '\2192';
+}
+
+/* ── 3. Tag ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  font-size: var(--font-xs);
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-gray-100);
+  color: var(--color-text-secondary);
+}
+
+.tag--primary {
+  background-color: var(--color-primary-light);
+  color: var(--color-navy);
+}
+
+.tag--version {
+  background-color: var(--color-navy);
+  color: var(--color-text-on-navy);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+/* ── 4. Code Block ── */
+.code-block {
+  position: relative;
+  background-color: var(--color-bg-code);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.code-block__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-4);
+  background-color: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.code-block__label {
+  font-size: var(--font-xs);
+  color: var(--color-gray-400);
+  font-family: var(--font-mono);
+}
+
+.code-block__body {
+  padding: var(--space-4);
+  overflow-x: auto;
+}
+
+.code-block__body pre {
+  margin: 0;
+  font-size: var(--font-sm);
+  line-height: 1.6;
+  color: #E2E8F0;
+  white-space: pre;
+  tab-size: 2;
+}
+
+/* ── 5. Copy Button ── */
+.btn-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--font-xs);
+  color: var(--color-gray-400);
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn-copy:hover {
+  color: var(--color-text-on-navy);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-copy.is-copied {
+  color: var(--color-success);
+}
+
+.btn-copy__icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── 6. Tab ── */
+.tabs {
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabs__item {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.tabs__item:hover {
+  color: var(--color-text);
+}
+
+.tabs__item.is-active {
+  color: var(--color-navy);
+  border-bottom-color: var(--color-navy);
+}
+
+.tab-panel {
+  display: none;
+  padding-top: var(--space-6);
+}
+
+.tab-panel.is-active {
+  display: block;
+}
+
+/* ── 7. Pipeline ── */
+.pipeline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) 0;
+  overflow-x: auto;
+}
+
+.pipeline__node {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-gray-100);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  transition: background-color var(--transition-fast);
+}
+
+.pipeline__node.is-active {
+  background-color: var(--color-navy);
+  color: var(--color-text-on-navy);
+}
+
+.pipeline__node.is-highlight {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+.pipeline__arrow {
+  color: var(--color-gray-300);
+  font-size: var(--font-lg);
+  flex-shrink: 0;
+}
+
+.pipeline__branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.pipeline__branch-line {
+  width: 1px;
+  height: 16px;
+  background-color: var(--color-gray-300);
+}
+
+/* ── 8. Checkbox (Configurator) ── */
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.checkbox:hover {
+  background-color: var(--color-gray-50);
+}
+
+.checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--color-navy);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.checkbox input[type="checkbox"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.checkbox__label {
+  font-weight: var(--weight-medium);
+}
+
+.checkbox__desc {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── 9. Toast ── */
+.toast {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  padding: var(--space-3) var(--space-6);
+  background-color: var(--color-navy);
+  color: var(--color-text-on-navy);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-toast);
+  opacity: 0;
+  transition: transform var(--transition-base), opacity var(--transition-base);
+  pointer-events: none;
+}
+
+.toast.is-visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ── 10. Step (설치 가이드) ── */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.step {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.step__number {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-navy);
+  color: var(--color-text-on-navy);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-bold);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.step__header {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.step__content {
+  flex: 1;
+}
+
+.step__title {
+  font-size: var(--font-lg);
+  font-weight: var(--weight-semibold);
+  margin-bottom: var(--space-2);
+}
+
+.step__desc {
+  font-size: var(--font-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── 11. Table ── */
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-sm);
+}
+
+.table th {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
+  background-color: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-light);
+  vertical-align: top;
+}
+
+.table td code {
+  font-size: var(--font-xs);
+  padding: 1px 6px;
+  background-color: var(--color-gray-100);
+  border-radius: var(--radius-sm);
+  color: var(--color-navy);
+}
+
+/* ── 12. Preset Buttons ── */
+.preset-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.preset-btn {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-sm);
+  font-weight: var(--weight-medium);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.preset-btn:hover {
+  border-color: var(--color-navy);
+  color: var(--color-navy);
+}
+
+.preset-btn.is-active {
+  border-color: var(--color-navy);
+  background-color: var(--color-navy);
+  color: var(--color-text-on-navy);
+}
+
+/* ── 13. Section Header ── */
+.section-header {
+  text-align: center;
+  margin-bottom: var(--space-12);
+}
+
+.section-header__title {
+  font-size: var(--font-3xl);
+  margin-bottom: var(--space-3);
+}
+
+.section-header__subtitle {
+  font-size: var(--font-lg);
+  color: var(--color-text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ── 14. Badge Count ── */
+.badge-count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-xs);
+  color: var(--color-text-secondary);
+}
+
+.badge-count__num {
+  font-weight: var(--weight-bold);
+  color: var(--color-navy);
+}

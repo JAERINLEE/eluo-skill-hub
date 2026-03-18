@@ -1,5 +1,5 @@
 import { createClient } from '@/shared/infrastructure/supabase/server';
-import { uploadFile, deleteFile } from '@/shared/infrastructure/supabase/storage';
+import { uploadFile, deleteFile, sanitizeStoragePath } from '@/shared/infrastructure/supabase/storage';
 import type {
   AdminRepository,
   CategoryOption,
@@ -608,7 +608,7 @@ export class SupabaseAdminRepository implements AdminRepository {
 
       if (input.markdownFile) {
         // 새 마크다운 업로드
-        const mdPath = `${input.skillId}/${input.markdownFile.name}`;
+        const mdPath = sanitizeStoragePath(input.skillId, input.markdownFile.name);
         try {
           await uploadFile('skill-descriptions', mdPath, input.markdownFile);
           const arrayBuffer = await input.markdownFile.arrayBuffer();
@@ -629,7 +629,7 @@ export class SupabaseAdminRepository implements AdminRepository {
       }
     } else if (input.markdownFile) {
       // removeMarkdown이 false지만 새 파일이 있는 경우 (기존 없이 새로 추가)
-      const mdPath = `${input.skillId}/${input.markdownFile.name}`;
+      const mdPath = sanitizeStoragePath(input.skillId, input.markdownFile.name);
       try {
         await uploadFile('skill-descriptions', mdPath, input.markdownFile);
         const arrayBuffer = await input.markdownFile.arrayBuffer();
@@ -668,7 +668,7 @@ export class SupabaseAdminRepository implements AdminRepository {
     if (input.templateFiles && input.templateFiles.length > 0) {
       await Promise.all(
         input.templateFiles.map((file) => {
-          const filePath = `${input.skillId}/${file.name}`;
+          const filePath = sanitizeStoragePath(input.skillId, file.name);
           const fileType = file.name.endsWith('.zip') ? '.zip' : '.md';
           return (async () => {
             await uploadFile('skill-templates', filePath, file);
@@ -736,7 +736,7 @@ export class SupabaseAdminRepository implements AdminRepository {
 
     if (input.markdownFile) {
       const mdFile = input.markdownFile;
-      const mdPath = `${skillId}/${mdFile.name}`;
+      const mdPath = sanitizeStoragePath(skillId, mdFile.name);
       uploadTasks.push(
         (async () => {
           await uploadFile('skill-descriptions', mdPath, mdFile);
@@ -754,7 +754,7 @@ export class SupabaseAdminRepository implements AdminRepository {
 
     if (input.templateFiles && input.templateFiles.length > 0) {
       for (const file of input.templateFiles) {
-        const filePath = `${skillId}/${file.name}`;
+        const filePath = sanitizeStoragePath(skillId, file.name);
         const fileType = file.name.endsWith('.zip') ? '.zip' : '.md';
         uploadTasks.push(
           (async () => {

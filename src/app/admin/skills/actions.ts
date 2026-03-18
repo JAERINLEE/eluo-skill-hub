@@ -42,8 +42,8 @@ export async function createSkill(formData: FormData): Promise<CreateSkillResult
   if (markdownFile) {
     if (!markdownFile.name.endsWith('.md')) {
       fieldErrors.markdownFile = '.md 파일만 업로드 가능합니다';
-    } else if (markdownFile.size > 1048576) {
-      fieldErrors.markdownFile = '파일 크기는 1MB 이하여야 합니다';
+    } else if (markdownFile.size > 52428800) {
+      fieldErrors.markdownFile = '파일 용량이 50MB를 초과하여 업로드할 수 없습니다';
     }
   }
 
@@ -56,8 +56,8 @@ export async function createSkill(formData: FormData): Promise<CreateSkillResult
       fieldErrors.templateFiles = '.zip 또는 .md 파일만 업로드 가능합니다';
       break;
     }
-    if (entry.size > 512000) {
-      fieldErrors.templateFiles = '템플릿 파일 크기는 500KB 이하여야 합니다';
+    if (entry.size > 52428800) {
+      fieldErrors.templateFiles = '파일 용량이 50MB를 초과하여 업로드할 수 없습니다';
       break;
     }
     templateFiles.push(entry);
@@ -155,8 +155,8 @@ export async function updateSkill(formData: FormData): Promise<UpdateSkillResult
   if (markdownFile) {
     if (!markdownFile.name.endsWith('.md')) {
       fieldErrors.markdownFile = '.md 파일만 업로드 가능합니다';
-    } else if (markdownFile.size > 1048576) {
-      fieldErrors.markdownFile = '파일 크기는 1MB 이하여야 합니다';
+    } else if (markdownFile.size > 52428800) {
+      fieldErrors.markdownFile = '파일 용량이 50MB를 초과하여 업로드할 수 없습니다';
     }
   }
 
@@ -168,8 +168,8 @@ export async function updateSkill(formData: FormData): Promise<UpdateSkillResult
       fieldErrors.templateFiles = '.zip 또는 .md 파일만 업로드 가능합니다';
       break;
     }
-    if (entry.size > 512000) {
-      fieldErrors.templateFiles = '템플릿 파일 크기는 500KB 이하여야 합니다';
+    if (entry.size > 52428800) {
+      fieldErrors.templateFiles = '파일 용량이 50MB를 초과하여 업로드할 수 없습니다';
       break;
     }
     templateFiles.push(entry);
