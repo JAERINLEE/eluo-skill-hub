@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eluo Skill Hub - 마이그레이션 인수인계서</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1a1a2e;
+      --heading: #0f0f23;
+      --accent: #2563eb;
+      --border: #e2e8f0;
+      --code-bg: #f1f5f9;
+      --code-text: #1e293b;
+      --blockquote-bg: #eff6ff;
+      --blockquote-border: #3b82f6;
+      --table-header-bg: #f8fafc;
+      --table-stripe: #f8fafc;
+      --link: #2563eb;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      font-size: 15px;
+    }
+    h1 {
+      font-size: 2em;
+      color: var(--heading);
+      border-bottom: 3px solid var(--accent);
+      padding-bottom: 12px;
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 1.5em;
+      color: var(--heading);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+    }
+    h3 {
+      font-size: 1.2em;
+      color: var(--heading);
+      margin-top: 32px;
+      margin-bottom: 12px;
+    }
+    h4 {
+      font-size: 1.05em;
+      color: var(--heading);
+      margin-top: 24px;
+      margin-bottom: 8px;
+    }
+    p { margin-bottom: 12px; }
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0;
+    }
+    blockquote {
+      background: var(--blockquote-bg);
+      border-left: 4px solid var(--blockquote-border);
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+    }
+    blockquote p { margin-bottom: 4px; }
+    blockquote p:last-child { margin-bottom: 0; }
+    code {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 0.9em;
+    }
+    pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 16px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 12px 0 16px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+      font-size: inherit;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 20px;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+    }
+    th {
+      background: var(--table-header-bg);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    tr:nth-child(even) { background: var(--table-stripe); }
+    ul, ol {
+      margin: 8px 0 16px 24px;
+    }
+    li { margin-bottom: 4px; }
+    li ul, li ol { margin-top: 4px; margin-bottom: 4px; }
+    img {
+      max-width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin: 12px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .subtitle {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    .toc {
+      background: var(--table-header-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 24px 0 32px;
+    }
+    .toc ol { margin: 8px 0 0 20px; }
+    .toc li { margin-bottom: 6px; }
+    .prompt-box {
+      background: #0f172a;
+      color: #a5f3fc;
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin: 12px 0 16px;
+      font-family: 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      border-left: 4px solid #06b6d4;
+      white-space: pre-wrap;
+    }
+    .appendix {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+    .appendix h2 { border-bottom-color: #fde047; margin-top: 0; }
+    strong { color: var(--heading); }
+  </style>
+</head>
+<body>
+
+<h1>Eluo Skill Hub - 마이그레이션 인수인계서</h1>
+<p class="subtitle">작성일: 2026-03-24 &nbsp;|&nbsp; 대상: GitHub 저장소 + Supabase 프로젝트 + Vercel 배포 전체 이전</p>
+
+<hr>
+
+<div class="toc">
+  <strong>목차</strong>
+  <ol>
+    <li><a href="#s1">Supabase 프로젝트 이전</a></li>
+    <li><a href="#s2">Vercel 배포 이전</a></li>
+    <li><a href="#s3">환경 변수 전체 목록</a></li>
+    <li><a href="#s4">로컬 개발 환경 셋업</a></li>
+    <li><a href="#s5">테스트 실행 방법</a></li>
+    <li><a href="#s6">주의사항 및 트러블슈팅</a></li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="s1">1. Supabase 프로젝트 이전</h2>
+<!-- ============================================================ -->
+
+<h3>1.1 새 프로젝트 생성</h3>
+<ol>
+  <li><a href="https://supabase.com/dashboard">Supabase Dashboard</a>에서 <strong>New Project</strong> 클릭</li>
+  <li>설정:
+    <ul>
+      <li><strong>Organization</strong>: 새 계정의 조직 선택</li>
+      <li><strong>Project name</strong>: <code>eluo-skill-hub</code> (또는 원하는 이름)</li>
+      <li><strong>Database Password</strong>: 설정 후 <strong>반드시 메모</strong> (마이그레이션 스크립트에서 사용)</li>
+      <li><strong>Region</strong>: <code>Northeast Asia (Seoul)</code> 권장</li>
+    </ul>
+  </li>
+  <li><strong>Create new project</strong> 클릭</li>
+</ol>
+
+<h3>1.2 DB 연결 정보 확인 (Session Pooler)</h3>
+<p>프로젝트 생성 후 <strong>Connect to your project</strong> 화면에서 연결 정보를 확인합니다.</p>
+<p><strong>Direct Connection</strong> 탭에서 <strong>Session pooler</strong>를 선택하세요:</p>
+<img src="migration-dump/images/supabase-connect-1.png" alt="Supabase 연결 방식 선택 - Session pooler 선택">
+<p>Session pooler 선택 후 표시되는 연결 정보를 메모합니다:</p>
+<img src="migration-dump/images/supabase-connect.png" alt="Supabase Connection String 확인">
+
+<p>필요한 정보 3가지:</p>
+<table>
+  <tr><th>항목</th><th>예시</th><th>용도</th></tr>
+  <tr><td><strong>host</strong></td><td><code>aws-1-ap-northeast-1.pooler.supabase.com</code></td><td><code>migrate.sh</code>의 <code>NEW_HOST</code></td></tr>
+  <tr><td><strong>user</strong></td><td><code>postgres.xxxxxxxxxxxx</code></td><td><code>migrate.sh</code>의 <code>NEW_USER</code></td></tr>
+  <tr><td><strong>password</strong></td><td>프로젝트 생성 시 설정한 비밀번호</td><td><code>migrate.sh</code>의 <code>NEW_PASSWORD</code></td></tr>
+</table>
+
+<p>또한 <strong>Settings → API</strong>에서 아래 키도 메모합니다:</p>
+<table>
+  <tr><th>항목</th><th>용도</th></tr>
+  <tr><td><strong>Project URL</strong></td><td><code>.env.local</code>의 <code>NEXT_PUBLIC_SUPABASE_URL</code></td></tr>
+  <tr><td><strong>anon public key</strong></td><td><code>.env.local</code>의 <code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY</code></td></tr>
+  <tr><td><strong>service_role key</strong></td><td><code>migrate-storage.ts</code>에서 사용 (코드에는 넣지 않음)</td></tr>
+</table>
+
+<h3>1.3 마이그레이션 스크립트 실행</h3>
+<p><code>migration-dump/</code> 디렉토리에 모든 스크립트가 준비되어 있습니다. 사용자는 <strong>변수 수정 후 실행만</strong> 하면 됩니다.</p>
+
+<h4>스크립트 구성</h4>
+<pre><code>migration-dump/
+├── migrate.sh              ← 원클릭 실행 (스키마+함수+RLS+데이터 전부)
+├── migrate-storage.ts      ← Storage 파일 복사
+├── 01_schema.sql           ← 테이블 12개 + 시퀀스 + 인덱스 20개
+├── 02_functions.sql        ← 함수 14개 + 트리거 3개
+├── 03_rls.sql              ← RLS 정책 48개 + Storage 버킷 2개
+├── 04_import_data.sql      ← CSV 데이터 임포트 + 무결성 검증
+├── images/                 ← 가이드 이미지
+└── *.csv (14개)            ← 기존 DB에서 덤프한 데이터</code></pre>
+
+<h4>Step 1: DB 마이그레이션 실행</h4>
+<p>Claude Code에게 아래와 같이 요청하세요:</p>
+<div class="prompt-box">DB 마이그레이션 실행해줘.
+
+NEW_HOST="aws-1-ap-northeast-1.pooler.supabase.com"
+NEW_USER="postgres.새프로젝트ref"
+NEW_PASSWORD="새프로젝트DB비밀번호"
+
+migration-dump/migrate.sh 실행해줘.</div>
+<blockquote><p>비밀번호 해시까지 완전히 이전되므로, 기존 사용자는 <strong>기존 비밀번호로 그대로 로그인</strong>할 수 있습니다.</p></blockquote>
+
+<h4>Step 2: Storage 파일 마이그레이션</h4>
+<p>기존/새 프로젝트 모두에서 <strong>Secret key (service_role)</strong>가 필요합니다.</p>
+<p><strong>Settings → API Keys → Secret keys</strong>에서 확인:</p>
+<img src="migration-dump/images/supabase-secret-key.png" alt="Supabase Secret Key 확인">
+<p>Claude Code에게 아래와 같이 요청하세요:</p>
+<div class="prompt-box">Storage 파일 마이그레이션 실행해줘.
+
+OLD_SERVICE_KEY="&lt;기존_프로젝트_SERVICE_ROLE_KEY&gt;"
+NEW_URL="https://새프로젝트ref.supabase.co"
+NEW_SERVICE_KEY="새_프로젝트_secret_key"
+
+migration-dump/migrate-storage.ts 실행해줘.</div>
+
+<h4>Step 3: Auth 설정</h4>
+<p>Supabase Dashboard → <strong>Authentication → Sign In / Providers</strong>에서 설정합니다.</p>
+<p><strong>Sign In / Providers</strong> 화면에서 아래 항목을 확인합니다:</p>
+<ul>
+  <li><strong>Allow new users to sign up</strong>: 활성화</li>
+  <li><strong>Confirm email</strong>: 활성화 (사용자가 이메일 인증 후 가입 완료)</li>
+  <li><strong>Auth Providers → Email</strong>: Enabled 상태 확인</li>
+</ul>
+<img src="migration-dump/images/supabase-auth.png" alt="Auth 설정 - Sign In / Providers">
+
+<p><strong>Email Provider</strong> 상세 설정:</p>
+<ul>
+  <li><strong>Enable Email provider</strong>: 활성화</li>
+  <li><strong>Secure email change / Secure password change</strong>: 활성화</li>
+  <li><strong>Prevent use of leaked passwords</strong>: 활성화</li>
+</ul>
+<img src="migration-dump/images/supabase-auth-1.png" alt="Email Provider 설정">
+
+<p><strong>OTP 설정</strong>:</p>
+<ul>
+  <li><strong>Minimum password length</strong>: 6</li>
+  <li><strong>Email OTP Expiration</strong>: 3600 seconds</li>
+  <li><strong>Email OTP Length</strong>: 8</li>
+</ul>
+<img src="migration-dump/images/supabase-auth-2.png" alt="OTP 설정">
+
+<p><strong>URL Configuration</strong> (Authentication → URL Configuration):</p>
+<img src="migration-dump/images/supabase-config.png" alt="URL Configuration 설정">
+<ul>
+  <li><strong>Site URL</strong>: 프로덕션 도메인으로 변경 (예: <code>https://your-domain.com</code>)</li>
+  <li><strong>Redirect URLs</strong>: <code>http://localhost:3000/**</code> 추가 (로컬 개발용), 프로덕션 도메인도 추가</li>
+</ul>
+
+<h4>Step 4: Email Template 설정</h4>
+<p>Authentication → <strong>NOTIFICATIONS → Email</strong> → <strong>Confirm sign up</strong>에서 OTP 인증 메일 템플릿을 설정합니다.</p>
+<img src="migration-dump/images/supabase-email.png" alt="Email Template 설정">
+<ul>
+  <li><strong>Subject</strong>: <code>Confirm Your Signup</code></li>
+  <li><strong>Body</strong>: 아래 HTML을 Source 모드에서 붙여넣기</li>
+</ul>
+<pre><code>&lt;div style="max-width: 400px; margin: 0 auto; background-color: #1a1a1a; padding: 40px 20px; border-radius: 16px; text-align: center; color: #ffffff; font-family: ui-monospace, 'Cascadia Code', monospace;"&gt;
+  &lt;h2 style="font-size: 20px; color: #00ff9d; margin-bottom: 20px;"&gt;&amp;gt; VERIFICATION_CODE&lt;/h2&gt;
+  &lt;p style="font-size: 14px; color: #cccccc; margin-bottom: 30px;"&gt;본인 확인을 위한 보안 코드입니다. 🤖&lt;/p&gt;
+
+  &lt;div style="border: 1px dashed #00ff9d; padding: 25px; border-radius: 4px; background-color: rgba(0, 255, 157, 0.05);"&gt;
+    &lt;span style="font-size: 36px; font-weight: bold; letter-spacing: 12px; color: #00ff9d;"&gt;{{ .Token }}&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;p style="color: #999; font-size: 13px;"&gt;
+    ⏱ 코드는 발급 후 &lt;strong&gt;1시간 동안&lt;/strong&gt; 유효합니다.&lt;br&gt;
+    본인이 요청하지 않았다면 이 메일을 무시하셔도 됩니다.
+  &lt;/p&gt;
+&lt;/div&gt;</code></pre>
+
+<h3>1.4 데이터베이스 상세 스키마 (참고용)</h3>
+<p>마이그레이션 스크립트(<code>01_schema.sql</code> ~ <code>03_rls.sql</code>)에 모든 내용이 포함되어 있으므로 수동 실행할 필요는 없습니다. 아래는 참고용 요약입니다.</p>
+
+<h4>주요 함수</h4>
+<table>
+  <tr><th>함수명</th><th>용도</th></tr>
+  <tr><td><code>is_admin(uuid)</code></td><td>관리자 확인 (RLS 정책에서 사용)</td></tr>
+  <tr><td><code>handle_new_user()</code></td><td>이메일 인증 완료 시 profiles 자동 생성 (UPDATE 트리거)</td></tr>
+  <tr><td><code>handle_updated_at()</code></td><td>skills 수정 시 updated_at 자동 갱신</td></tr>
+  <tr><td><code>generate_skill_code()</code></td><td>skills 생성 시 skill_code 자동 부여 (시퀀스 기반)</td></tr>
+  <tr><td><code>check_email_exists(text)</code></td><td>회원가입 시 이메일 중복 확인</td></tr>
+  <tr><td><code>increment_download_count(uuid)</code></td><td>템플릿 다운로드 카운트 증가</td></tr>
+  <tr><td><code>get_analytics_overview(timestamptz, timestamptz)</code></td><td>분석 개요 (활성 유저, 조회수, 다운로드)</td></tr>
+  <tr><td><code>get_daily_trend(timestamptz, timestamptz)</code></td><td>일별 트렌드</td></tr>
+  <tr><td><code>get_skill_rankings(timestamptz, timestamptz, int)</code></td><td>스킬 랭킹</td></tr>
+  <tr><td><code>get_user_behavior(timestamptz, timestamptz)</code></td><td>사용자 행동 분석</td></tr>
+</table>
+
+<h4>트리거</h4>
+<table>
+  <tr><th>트리거</th><th>테이블</th><th>시점</th><th>함수</th></tr>
+  <tr><td><code>on_auth_user_email_confirmed</code></td><td><code>auth.users</code></td><td>AFTER UPDATE</td><td><code>handle_new_user()</code></td></tr>
+  <tr><td><code>trg_generate_skill_code</code></td><td><code>skills</code></td><td>BEFORE INSERT</td><td><code>generate_skill_code()</code></td></tr>
+  <tr><td><code>set_skills_updated_at</code></td><td><code>skills</code></td><td>BEFORE UPDATE</td><td><code>handle_updated_at()</code></td></tr>
+</table>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2 id="s2">2. Vercel 배포 이전</h2>
+<!-- ============================================================ -->
+
+<h3>2.1 새 프로젝트 생성</h3>
+<ol>
+  <li><a href="https://vercel.com/dashboard">Vercel Dashboard</a>에서 "Add New Project"</li>
+  <li>이전된 GitHub 저장소 연결</li>
+  <li>Framework Preset: <strong>Next.js</strong> 선택</li>
+  <li>Build Command: <code>pnpm build</code> (자동 감지됨)</li>
+  <li>Output Directory: <code>.next</code> (기본값)</li>
+</ol>
+
+<h3>2.2 환경 변수 설정</h3>
+<p>Vercel Dashboard → <strong>Settings → Environment Variables</strong>에서 아래 3개 변수를 추가합니다.</p>
+<img src="migration-dump/images/vercel-env.png" alt="Vercel 환경 변수 설정">
+<table>
+  <tr><th>변수명</th><th>값</th></tr>
+  <tr><td><code>NEXT_PUBLIC_SITE_URL</code></td><td>프로덕션 도메인 (예: <code>https://eluo-skill-hub.vercel.app</code>)</td></tr>
+  <tr><td><code>NEXT_PUBLIC_SUPABASE_URL</code></td><td>새 Supabase 프로젝트 URL</td></tr>
+  <tr><td><code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY</code></td><td>새 Supabase Publishable key</td></tr>
+</table>
+
+<h3>2.3 Next.js 설정 참고</h3>
+<p>현재 <code>next.config.ts</code> 설정:</p>
+<pre><code>{
+  images: { formats: ['image/avif', 'image/webp'] },
+  compress: true,
+  poweredByHeader: false,
+}</code></pre>
+<p>별도의 <code>vercel.json</code>은 없으며 Vercel 기본 설정을 사용합니다.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2 id="s3">3. 환경 변수 전체 목록</h2>
+<!-- ============================================================ -->
+
+<h3><code>.env.local</code> (로컬 개발 + Vercel)</h3>
+<table>
+  <tr><th>변수</th><th>설명</th><th>예시</th></tr>
+  <tr><td><code>NEXT_PUBLIC_SUPABASE_URL</code></td><td>Supabase 프로젝트 URL</td><td><code>https://xxxxx.supabase.co</code></td></tr>
+  <tr><td><code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY</code></td><td>Supabase Anon (공개) Key</td><td><code>sb_publishable_xxxxx</code></td></tr>
+  <tr><td><code>NEXT_PUBLIC_SITE_URL</code></td><td>사이트 기본 URL</td><td><code>http://localhost:3000</code> (로컬) / <code>https://도메인</code> (프로덕션)</td></tr>
+</table>
+
+<h3><code>.env.test</code> (테스트 전용)</h3>
+<table>
+  <tr><th>변수</th><th>설명</th></tr>
+  <tr><td><code>TEST_USER_EMAIL</code></td><td>E2E 테스트용 사용자 이메일</td></tr>
+  <tr><td><code>TEST_USER_PASSWORD</code></td><td>E2E 테스트용 사용자 비밀번호</td></tr>
+</table>
+
+<h3><code>.mcp.json</code> (Claude Code MCP 연동)</h3>
+<p>Supabase project ref를 새 프로젝트로 변경:</p>
+<pre><code>{
+  "mcpServers": {
+    "supabase": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=&lt;새_프로젝트_ref&gt;"
+    }
+  }
+}</code></pre>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2 id="s4">4. 로컬 개발 환경 셋업</h2>
+<!-- ============================================================ -->
+
+<pre><code># 1. 저장소 클론
+git clone https://github.com/&lt;새계정&gt;/eluo-skill-hub.git
+cd eluo-skill-hub
+
+# 2. pnpm 설치 (없는 경우)
+npm install -g pnpm
+
+# 3. 의존성 설치
+pnpm install
+
+# 4. 환경 변수 설정
+cp .env.local.example .env.local
+# .env.local 파일에 새 Supabase 프로젝트 정보 입력
+
+# 5. 개발 서버 실행
+pnpm dev
+# http://localhost:3000 접속</code></pre>
+
+<h3>관리자 계정 설정</h3>
+<p>데이터 마이그레이션 시 기존 관리자 계정이 그대로 이전됩니다. 새로 관리자를 추가해야 하는 경우:</p>
+<ol>
+  <li>일반 사용자로 회원가입 (OTP 인증 완료)</li>
+  <li>Supabase SQL Editor에서 해당 유저의 role을 admin으로 변경:</li>
+</ol>
+<pre><code>UPDATE public.profiles
+SET role_id = (SELECT id FROM public.roles WHERE name = 'admin')
+WHERE email = '&lt;관리자_이메일&gt;';</code></pre>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2 id="s5">5. 테스트 실행 방법</h2>
+<!-- ============================================================ -->
+
+<h3>Unit 테스트 (Jest)</h3>
+<pre><code>pnpm test              # 전체 테스트 실행
+pnpm test:watch        # Watch 모드
+pnpm test:coverage     # 커버리지 리포트</code></pre>
+
+<h3>E2E 테스트 (Playwright)</h3>
+<pre><code># 1. Playwright 브라우저 설치 (최초 1회)
+npx playwright install
+
+# 2. .env.test 파일에 테스트 계정 정보 설정
+
+# 3. E2E 테스트 실행
+pnpm test:e2e
+
+# 4. 리포트 확인
+npx playwright show-report</code></pre>
+<p>Playwright는 로그인 상태를 <code>.auth/user.json</code>에 저장하여 재사용합니다.</p>
+
+<hr>
+
+<!-- ============================================================ -->
+<h2 id="s6">6. 주의사항 및 트러블슈팅</h2>
+<!-- ============================================================ -->
+
+<h3>마이그레이션 관련 문제</h3>
+<table>
+  <tr><th>문제</th><th>원인</th><th>해결</th></tr>
+  <tr><td><code>migrate.sh</code> 연결 실패</td><td>호스트/유저/비밀번호 오류</td><td>Session pooler 연결 정보 재확인 (1.2절 이미지 참고)</td></tr>
+  <tr><td><code>pg_dump</code> 버전 불일치</td><td>로컬 PostgreSQL 클라이언트가 낮은 버전</td><td><code>migrate.sh</code>는 <code>psql</code>의 <code>\COPY</code>를 사용하므로 해당 없음</td></tr>
+  <tr><td><code>Tenant or user not found</code></td><td>Transaction pooler(6543) 사용 또는 잘못된 리전</td><td><strong>Session pooler</strong>(5432) + 정확한 리전 호스트 확인</td></tr>
+  <tr><td>IPv6 연결 실패 (WSL)</td><td>Direct Connection은 IPv6만 지원</td><td>Session pooler 사용 (IPv4 지원)</td></tr>
+  <tr><td>복원 시 중복 키 에러</td><td>이미 데이터가 존재</td><td>새 프로젝트에서 실행했는지 확인. 재실행 시 테이블 DROP 후 재시도</td></tr>
+  <tr><td>복원 후 로그인 실패</td><td><code>auth.identities</code> 누락</td><td><code>auth_identities.csv</code>가 정상 임포트 되었는지 확인</td></tr>
+  <tr><td>profiles 중복 생성</td><td>트리거 비활성화 안 됨</td><td><code>04_import_data.sql</code>이 자동으로 처리하므로 <code>migrate.sh</code> 통해 실행</td></tr>
+  <tr><td>Storage 마이그레이션 실패</td><td>service_role key 오류</td><td>Dashboard → Settings → API에서 <strong>service_role</strong> (secret) 키 확인</td></tr>
+</table>
+
+<h3>서비스 관련 문제</h3>
+<table>
+  <tr><th>문제</th><th>원인</th><th>해결</th></tr>
+  <tr><td>ZIP 파일 업로드 실패</td><td>Windows에서 MIME 타입 <code>application/x-zip-compressed</code> 전달</td><td>코드에서 Blob 변환으로 MIME 강제 지정 (이미 처리됨)</td></tr>
+  <tr><td>회원가입 후 프로필 없음</td><td><code>handle_new_user</code> 트리거 미설정</td><td><code>02_functions.sql</code> 트리거 생성 확인</td></tr>
+  <tr><td>관리자 페이지 접근 불가</td><td>RLS 정책 또는 role 미설정</td><td><code>is_admin</code> 함수 + <code>profiles.role_id</code> 확인</td></tr>
+  <tr><td>Storage 업로드 권한 에러</td><td>Storage RLS 정책 미설정</td><td><code>03_rls.sql</code> Storage 정책 확인</td></tr>
+  <tr><td>파일명 깨짐</td><td>한글 파일명 인코딩</td><td><code>sanitizeStoragePath</code> 함수가 비-ASCII 문자 제거 (이미 처리됨)</td></tr>
+</table>
+
+<h3>TypeScript 규칙</h3>
+<ul>
+  <li><code>any</code> 타입 사용 <strong>절대 금지</strong> (ESLint에서 에러 발생)</li>
+  <li>strict 모드 필수</li>
+</ul>
+
+<h3>커밋 컨벤션</h3>
+<pre><code>feat: 새로운 기능 추가          fix: 버그 수정
+docs: 문서 수정                style: 코드 스타일 수정
+refactor: 코드 리팩토링         test: 테스트 코드 추가/수정
+chore: 빌드/툴 변경             ci: CI/CD 관련 변경</code></pre>
+<blockquote><p>prefix는 영어, 설명은 한글로 작성</p></blockquote>
+
+<h3>이벤트 로그 타입 목록</h3>
+<table>
+  <tr><th>event_name</th><th>properties</th></tr>
+  <tr><td><code>auth.signin</code></td><td><code>{ email }</code></td></tr>
+  <tr><td><code>auth.signup</code></td><td><code>{ email }</code></td></tr>
+  <tr><td><code>auth.signout</code></td><td><code>{}</code></td></tr>
+  <tr><td><code>skill.view</code></td><td><code>{ skill_id }</code></td></tr>
+  <tr><td><code>skill.bookmark_add</code></td><td><code>{ skill_id }</code></td></tr>
+  <tr><td><code>skill.bookmark_remove</code></td><td><code>{ skill_id }</code></td></tr>
+  <tr><td><code>skill.template_download</code></td><td><code>{ skill_id, template_id }</code></td></tr>
+  <tr><td><code>search.query</code></td><td><code>{ query }</code></td></tr>
+  <tr><td><code>search.tag</code></td><td><code>{ tag }</code></td></tr>
+  <tr><td><code>nav.sidebar_click</code></td><td><code>{ tab }</code></td></tr>
+</table>
+
+<h3>아키텍처 패턴</h3>
+<p>프로젝트는 <strong>도메인 중심 구조</strong>를 따릅니다:</p>
+<ul>
+  <li><code>domain/</code> - 타입 정의</li>
+  <li><code>infrastructure/</code> - Supabase Repository 구현</li>
+  <li><code>application/</code> - Use Case (비즈니스 로직)</li>
+  <li><code>presentation/</code> - React 컴포넌트</li>
+  <li><code>hooks/</code> - React Query 훅</li>
+</ul>
+
+<hr>
+
+<div class="appendix">
+  <h2>부록: 기존 Supabase 프로젝트 정보 (참고용)</h2>
+  <table>
+    <tr><th>항목</th><th>값</th></tr>
+    <tr><td>Project Ref</td><td><code>rcndirlsdmovufswhlqo</code></td></tr>
+    <tr><td>URL</td><td><code>https://rcndirlsdmovufswhlqo.supabase.co</code></td></tr>
+    <tr><td>Anon Key</td><td><code>sb_publishable_djfTZY88ZG9fYCPgMzjxIw_8aiqBRf7</code></td></tr>
+    <tr><td>Session Pooler Host</td><td><code>aws-1-ap-northeast-1.pooler.supabase.com</code></td></tr>
+    <tr><td>Session Pooler User</td><td><code>postgres.rcndirlsdmovufswhlqo</code></td></tr>
+    <tr><td>Session Pooler Port</td><td><code>5432</code></td></tr>
+  </table>
+  <blockquote><p>이전 완료 후 기존 프로젝트의 키는 반드시 교체하거나 프로젝트를 삭제하세요.</p></blockquote>
+</div>
+
+</body>
+</html>
