@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
   },
   compress: true,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        destination: 'https://eluo-xcipe.vercel.app/:path*',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
